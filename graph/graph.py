@@ -1,11 +1,14 @@
-from node import Node
+from .node import Node
 
 class Graph:
-    def __init__(self, adjList = {}, nodes = [], estimates = {}, directed = False):
+    def __init__(self, adjList = {}, nodes = [], estimates = {}, 
+                 start = [], finish = [], directed = False):
         self.adjList = adjList
         self.nodes = nodes
         self.directed = directed
         self.estimates = estimates
+        self.start = start
+        self.finish = finish
 
     def add_edge(self, src_node, dest_node, cost):
         n1 = Node(src_node)
@@ -32,3 +35,9 @@ class Graph:
 
     def add_estimate(self, node, value):
         self.estimates[node] = value
+
+    def add_start(self, node):
+        self.start.append(node)
+
+    def add_finish(self, node):
+        self.finish.append(node)

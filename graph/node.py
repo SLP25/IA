@@ -17,3 +17,6 @@ class Node:
 
     def __str__(self):
         return f"Node: {self.name}"
+    
+    def __eq__(self, node):
+        return node.name == self.name
