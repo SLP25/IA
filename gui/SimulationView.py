@@ -49,6 +49,8 @@ class SimulationView():
                 if event.key == pygame.K_RIGHT:
                     if self.timelineCurrPos<self.maxTimelinePos: # so it can't go over the finish
                             self.timelineCurrPos+=1
+                if event.key == pygame.K_r:
+                    self.__init__(self.screen,self.cars,self.inputImage,self.finalImage)
                 if event.key == pygame.K_p:
                     raise PERCARVIEW()
                 if event.key == pygame.K_q:

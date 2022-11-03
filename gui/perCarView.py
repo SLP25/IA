@@ -43,6 +43,8 @@ class PerCarView():
                 if event.key == pygame.K_RIGHT:
                     if self.currCar<self.maxCar: # so it can't go over the finish
                             self.currCar+=1
+                if event.key == pygame.K_r:
+                    self.__init__(self.screen,self.cars,self.finalImage)
                 if event.key == pygame.K_q:
                     raise QUIT()
                 if event.key == pygame.K_ESCAPE:

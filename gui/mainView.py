@@ -56,6 +56,8 @@ class MainView():
                     self.prev()
                 if event.key == pygame.K_DOWN:
                     self.next()
+                if event.key == pygame.K_r:
+                    self.__init__(self.screen)
                 if event.key == pygame.K_q:
                     raise QUIT()
                 if event.key == pygame.K_ESCAPE:
@@ -82,7 +84,6 @@ class MainView():
         self.tracks=[]
         with os.scandir('gui/circuits/') as circuits:
             for circuit in circuits:
-                print(circuit)
                 name=circuit.name
                 trackName=name.split('.')[0]
                 self.tracks.append((trackName,f'gui/circuits/{name}'))
