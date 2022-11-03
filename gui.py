@@ -4,7 +4,8 @@ from PIL import Image,ImageEnhance,ImageFilter
 from threading import Thread
 import time
 from car import Car,generateRandomColor
-
+import math
+import enum
 
 
 GRAVEL_TRAP_COLOR = [ 235, 203, 139]
@@ -95,17 +96,36 @@ def parseImage(path,finalPath):
         return s
 
 
+class View(Enum):
+    Main=0,
+    AlgSelector=0,
+    Simulation=0,
+    PerCarSimulation
+
+
+
 class GUI:
     def __init__(self,inputImagePath,outputImagePath='final.png'):
         self.inputImage=inputImagePath
         self.finalImage=outputImagePath
         self.track=parseImage(self.inputImage,self.finalImage)
         self.cars=[]
-                
+     
+    
+    
+    def drawCarLines(self,car,pos):
+        pygame.draw.line(self.screen,car.color,car.coordsMap[pos-1],car.coordsMap[pos],width=car.getCarLineWidthAtInstance(i))
+
+    
+    def _drawTrackComponent_(self,color,mask):
+        pygame.draw.polygon(self.screen,color,mask,width=12)
+        pygame.draw.polygon(self.screen,color,mask,width=0)
+    
+               
         
     def __run__(self):
-        clock = pygame.time.Clock()
-        screen = pygame.display.set_mode((1000,500))
+        self.clock = pygame.time.Clock()
+        self.screen = pygame.display.set_mode((1000,500))
         bg = pygame.image.load(self.finalImage)
         trackmask=pygame.mask.from_threshold(bg, TRACK_COLOR,threshold=(1,1,1)).outline()
         startmask=pygame.mask.from_threshold(bg,START_COLOR,threshold=(1,1,1) ).outline()
@@ -116,17 +136,12 @@ class GUI:
         if self.cars:
             maxpos = len(self.cars[0].coordsMap)-1
         while self.running:
-            clock.tick(60)
-            screen.fill(pygame.Color(GRAVEL_TRAP_COLOR))
+            self.clock.tick(60)
+            self.screen.fill(pygame.Color(GRAVEL_TRAP_COLOR))
             
-            pygame.draw.polygon(screen,TRACK_COLOR,trackmask,width=12)
-            pygame.draw.polygon(screen,TRACK_COLOR,trackmask,width=0)
-            
-            pygame.draw.polygon(screen,FINISH_COLOR,finishmask,width=12)
-            pygame.draw.polygon(screen,FINISH_COLOR,finishmask,width=0)
-            
-            pygame.draw.polygon(screen,START_COLOR,startmask,width=12)
-            pygame.draw.polygon(screen,START_COLOR,startmask,width=0)
+            self._drawTrackComponent_(TRACK_COLOR,trackmask)
+            self._drawTrackComponent_(FINISH_COLOR,finishmask)
+            self._drawTrackComponent_(START_COLOR,startmask)
         
             
             for event in pygame.event.get():
@@ -141,10 +156,10 @@ class GUI:
                         if pos<maxpos:
                                 pos+=1
             for car in self.cars:
-                pygame.draw.circle(screen,car.color,car.getCarPosAtInstance(pos), 5)
+                pygame.draw.circle(self.screen,car.color,car.getCarPosAtInstance(pos), 5)
                 if pos!=0:
                     for i in range(1,pos+1):
-                        pygame.draw.line(screen,car.color,car.coordsMap[i-1],car.coordsMap[i],width=car.getCarLineWidthAtInstance(i))
+                        self.drawCarLines(car,i)
             pygame.display.update()
                         
                         
