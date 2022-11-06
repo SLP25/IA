@@ -10,16 +10,29 @@ def generateRandomColor():
 class Car:
     coords=[]
     color=None
+    topSpeed=None
+    averageSpeed=None
     id=-1
     
-    def __init__(self,id,color,pos=[],speeds=[]):
+    def __init__(self,id,color,pos=[],speeds=[],tlen=0):
         self.id=id
         self.color=color
+        self.tlen=tlen
         self.coords=pos
         self.speedinCoords=speeds
     
     def getCarPosAtInstance(self,instance=0):
         return self.coords[instance]
+    
+    def getTopSpeed(self):
+        if self.topSpeed==None:
+            self.topSpeed=max(map(self.__vectorNorm__,self.speedinCoords))
+        return self.topSpeed
+    def getAverageSpeed(self):
+        if self.averageSpeed==None:
+            self.averageSpeed=sum(map(self.__vectorNorm__,self.speedinCoords))/len(self.speedinCoords)
+        return self.averageSpeed
+        
     
     def __vectorNorm__(self,vector):
         return math.sqrt(sum(map(lambda x: math.pow(x,2),vector)))

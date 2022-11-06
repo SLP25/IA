@@ -5,6 +5,7 @@ from Exceptions import POP, QUIT
 class PerCarView():
     
     def __init__(self,screen,cars,ImagePath='final.png'):
+        self.font = pygame.font.SysFont('Comic Sans MS', 12)
         self.finalImage=ImagePath
         
         self.screen=screen
@@ -49,12 +50,24 @@ class PerCarView():
                     raise QUIT()
                 if event.key == pygame.K_ESCAPE:
                     raise POP()
+    def _drawStat_(self,text,pos):
+        text = self.font.render(text, True,self.cars[self.currCar].color)
+        textRect = text.get_rect()
+        textRect.center = (40,pos)
+        self.screen.blit(text, textRect)
+        
+    def _drawStats_(self):
+        car=self.cars[self.currCar]
+        self._drawStat_(f"Distance:{car.tlen}",10)
+        self._drawStat_(f"TopSpeed:{car.getTopSpeed()}",25)
+        self._drawStat_(f"AvgSpeed:{car.getAverageSpeed():.2f}",40)
         
     def draw(self):
         self.screen.fill(pygame.Color(GRAVEL_TRAP_COLOR))
         self._drawTrackComponent_(TRACK_COLOR,self.trackmask)
         self._drawTrackComponent_(FINISH_COLOR,self.finishmask)
         self._drawTrackComponent_(START_COLOR,self.startmask)
+        self._drawStats_()
         
         self._eventHandler_()
         car=self.cars[self.currCar]

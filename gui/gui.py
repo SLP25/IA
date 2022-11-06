@@ -72,8 +72,8 @@ pos=list(map(lambda x:(x[0]*10,x[1]*10) ,everything))
 speeds=list(map(lambda x:(x[2],x[3]) ,everything))
 pos2=list(map(lambda x:(x[0]*10+1,x[1]*10) ,everything))
 
-c1=Car(0,color=generateRandomColor(),pos=pos,speeds=speeds)#[(0,0),(1,0),(2,0),(4,0),(8,0)],speeds=[])
-c2=Car(0,color=generateRandomColor(),pos=pos2,speeds=speeds)#[(0,0),(1,0),(2,0),(4,0),(8,0)],speeds=[])
+c1=Car(0,color=generateRandomColor(),pos=pos,speeds=speeds,tlen=336)#[(0,0),(1,0),(2,0),(4,0),(8,0)],speeds=[])
+c2=Car(0,color=generateRandomColor(),pos=pos2,speeds=speeds,tlen=336)#[(0,0),(1,0),(2,0),(4,0),(8,0)],speeds=[])
 
 g=GUI(cars=[c1,c2])
 
