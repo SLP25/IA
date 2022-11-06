@@ -58,9 +58,14 @@ class PerCarView():
         
     def _drawStats_(self):
         car=self.cars[self.currCar]
-        self._drawStat_(f"Distance:{car.tlen}",10)
-        self._drawStat_(f"TopSpeed:{car.getTopSpeed()}",25)
-        self._drawStat_(f"AvgSpeed:{car.getAverageSpeed():.2f}",40)
+        self._drawStat_(f"Distance:{car.getTopSpeed():.2f}",10)
+        self._drawStat_(f"TopSpeed:{car.getAverageSpeed():.2f}",25)
+        self._drawStat_(f"AvgSpeed:{car.getMedian():.2f}",40)
+        self._drawStat_(f"StdSpeed:{car.getStd():.2f}",55)
+        self._drawStat_(f"VarSpeed:{car.getVar():.2f}",70)
+        self._drawStat_(f"P25Speed:{car.get25Percentil():.2f}",85)
+        self._drawStat_(f"P50Speed:{car.get50Percentil():.2f}",100)
+        self._drawStat_(f"P75Speed:{car.get75Percentil():.2f}",115)
         
     def draw(self):
         self.screen.fill(pygame.Color(GRAVEL_TRAP_COLOR))

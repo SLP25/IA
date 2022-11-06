@@ -1,5 +1,6 @@
 import random
 import math
+import numpy as np
 def generateRandomColor():
     c1=random.randint(0,255)
     c2=random.randint(0,255)
@@ -20,18 +21,29 @@ class Car:
         self.tlen=tlen
         self.coords=pos
         self.speedinCoords=speeds
+        self.npVspeed=np.array(list(map(self.__vectorNorm__,self.speedinCoords)))
     
     def getCarPosAtInstance(self,instance=0):
         return self.coords[instance]
     
     def getTopSpeed(self):
-        if self.topSpeed==None:
-            self.topSpeed=max(map(self.__vectorNorm__,self.speedinCoords))
-        return self.topSpeed
+        return np.amax(self.npVspeed)
     def getAverageSpeed(self):
-        if self.averageSpeed==None:
-            self.averageSpeed=sum(map(self.__vectorNorm__,self.speedinCoords))/len(self.speedinCoords)
-        return self.averageSpeed
+        return np.mean(self.npVspeed)
+    def getMedian(self):
+        return np.median(self.npVspeed)
+    def getStd(self):
+        return np.std(self.npVspeed)
+    def getVar(self):
+        return np.var(self.npVspeed)
+    def get25Percentil(self):
+        return np.percentile(self.npVspeed,25)
+    def get50Percentil(self):
+        return np.percentile(self.npVspeed,50)
+    def get75Percentil(self):
+        return np.percentile(self.npVspeed,75)
+        
+    
         
     
     def __vectorNorm__(self,vector):
