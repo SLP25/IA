@@ -11,18 +11,32 @@ class Menu():
         self.options=options
         self.curr=0
     def next(self):
+        """
+           moves to the next option
+        """
         if self.curr==len(self.options)-1:
             self.curr=0
         else:
             self.curr+=1
     def prev(self):
+        """
+           moves to the previous option
+        """
         if self.curr==0:
             self.curr=len(self.options)-1
         else:
             self.curr-=1
     def __str__(self):
+        """
+           convert the menu into a string
+        """
         return f"{self.title}: {self.options[self.curr][0]}"
     def value(self):
+        """gets the value of the current selected option in the menu
+
+        Returns:
+            Any: the value of the current selected option
+        """
         return self.options[self.curr][1]
     
         
@@ -46,6 +60,13 @@ class MainView():
         pass
     
     def _eventHandler_(self):
+        """Handler for keyboard events
+
+        Raises:
+            QUIT: quit the application
+            POP: goes back to the previous 
+            SIMULATIONVIEW: goes to the view of all cars simulation
+        """
         for event in pygame.event.get():
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_LEFT:
@@ -67,12 +88,18 @@ class MainView():
 
     
     def next(self):
+        """
+           Set the next menu as selected
+        """
         if self.currMenu==len(self.menus)-1:
             self.currMenu=0
         else:
             self.currMenu+=1
     
     def prev(self):
+        """
+           Set the previous menu as selected
+        """
         if self.currMenu==0:
             self.currMenu=len(self.menus)-1
         else:
@@ -81,26 +108,50 @@ class MainView():
     
     
     def _get_Tracks_(self):
+        """
+           Scans the circuits folder for tracks to simulate in
+           Defines the track names and values
+        """
         self.tracks=[]
         with os.scandir('gui/circuits/') as circuits:
             for circuit in circuits:
                 name=circuit.name
                 trackName=name.split('.')[0]
                 self.tracks.append((trackName,f'gui/circuits/{name}'))
+    
     def _set_alg_(self):
+        """
+           Defines the algorithm names and values
+        """
         self.algorithms=[
             ("bfs","algfunc"),
         ]
     def getTrackMenuValue(self):
+        """Get the value in the current position of the track menu
+
+        Returns:
+            Any: the value of the current option of the track menu
+        """
         return self.menus[0].value()
         
     def _showMenu_(self,menu,color,pos):
+        """Displays a Menu in a given color and position
+
+        Args:
+            menu (Menu): the menu to display
+            color (Pygame Color): the color to show the menu in
+            pos (int): the Y position to show the menu in
+        """
         text = self.font.render(str(menu), True,color)
         textRect = text.get_rect()
         textRect.center = (500, 40*(pos+1))
         self.screen.blit(text, textRect)
     
     def draw(self):
+        """
+           draws the Menus in the display
+           handles keyboard events
+        """
         self.screen.fill(pygame.Color(50,50,50))
         for pos,menu in enumerate(self.menus):
             self._showMenu_(menu,SELECTED if pos==self.currMenu else UNSELECTED,pos)

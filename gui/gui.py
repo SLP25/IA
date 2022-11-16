@@ -22,13 +22,12 @@ class GUI:
         self.cars=cars
         
         
-        self.views.append(MainView(self.screen))
-    
-    def _mainView_(self):
-        self.screen.fill(pygame.Color(240,240,240))
-               
+        self.views.append(MainView(self.screen))               
         
     def __run__(self):
+        """
+           Main function to run the loop to show the graphics and the simulation
+        """
         self.clock = pygame.time.Clock()
         self.screen = pygame.display.set_mode((1000,500))
         pygame.mouse.set_visible(1)
@@ -55,11 +54,17 @@ class GUI:
             pygame.display.update()
                                  
     def run(self):
+        """
+           Creates a thread to run the application in
+        """
         self.running=True
         self.thread = Thread(target=self.__run__,args=())
         self.thread.start()
         
     def stop(self):
+        """
+           Stops the thread running the application
+        """
         self.running=False
         self.thread.join()
 
