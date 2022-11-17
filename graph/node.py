@@ -25,6 +25,9 @@ class Node:
     def __gen_estimate__(self, finishes):
         return min(map(lambda f: max(__estimateAxis__(self.x,self.vx,f[0]),
                                      __estimateAxis__(self.y,self.vy,f[1])), finishes))
+        
+    def deserialize(self):
+        return (self.x, self.y, self.vx, self.vy)
 
 def __estimateAxis__(i, vi, f):
     if i == f:

@@ -1,6 +1,6 @@
 import pygame
-from utils import parseImage,GRAVEL_TRAP_COLOR,TRACK_COLOR,START_COLOR,FINISH_COLOR
-from Exceptions import POP, QUIT
+from .utils import parseImage,GRAVEL_TRAP_COLOR,TRACK_COLOR,START_COLOR,FINISH_COLOR
+from .exceptions import POP, QUIT
 
 class PerCarView():
     
@@ -59,17 +59,17 @@ class PerCarView():
         """
         for event in pygame.event.get():
             if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_LEFT:
+                if event.key==pygame.K_LEFT:
                     if self.currCar>0: # so it can't go below the start
                         self.currCar-=1
-                if event.key == pygame.K_RIGHT:
+                if event.key==pygame.K_RIGHT:
                     if self.currCar<self.maxCar: # so it can't go over the finish
                             self.currCar+=1
-                if event.key == pygame.K_r:
+                if event.key==pygame.K_r:
                     self.__init__(self.screen,self.cars,self.finalImage)
-                if event.key == pygame.K_q:
+                if event.key==pygame.K_q:
                     raise QUIT()
-                if event.key == pygame.K_ESCAPE:
+                if event.key==pygame.K_ESCAPE:
                     raise POP()
                 
     def _drawStat_(self,text,pos):

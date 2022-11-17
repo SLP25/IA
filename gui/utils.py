@@ -19,18 +19,17 @@ def npArrayToImage(img):
     """
     return Image.fromarray(img)
 
-def imageFromTrackStr(string):
-    """Converts the string representation of the track into a 50*100 PIL Image
+def imageFromTrackMatrix(matrix):
+    """Converts the list of strings representation of the track into a 50*100 PIL Image
 
     Args:
-        string (string): the track to convert to an PIL Image
+        matrix (List): the track to convert to an PIL Image
 
     Returns:
         PIL Image: the image generated
     """
     img=[]
-    lines=string.split('\n')
-    for line in lines:
+    for line in matrix:
         for c in line:
             if c=='X':
                 img.append(GRAVEL_TRAP_COLOR)
@@ -118,20 +117,21 @@ def findStartEnd(image,track):
         track[finish[0]][finish[1]] = 'F'
     return track
 
-def convertTrackToString(track):
-    """Convert a List of Lists of characters into a \n separated string 
+def convertTrackToMatrix(track):
+    """Convert a List of Lists of characters into List of Strings
 
     Args:
         track (List[List[String]]): The List of List Of Characters to convert to a unified string
 
     Returns:
-        String : track representation in \n separated string
+        List : track representation in rows
     """
-    f=''
+    f=[]
     for row in track:
+        ft=''
         for c in row:
-            f+=c
-        f+='\n'
+            ft+=c
+        f.append(ft)
     return f
 
 
@@ -143,16 +143,16 @@ def parseImage(path,output):
         output (stirng): the file path to store the output track 
 
     Returns:
-        string: The track in a string representation
+        List: The track in a List of string representation
     """
     image=Image.open(path)
     image=image.resize((1000,500),Image.Resampling.NEAREST)# normalize image to 1000,500
     image=increaseColors(image)# brighten ups to be easier to detect colors
     track = getImageAsBW(image)#black and white to be easier to separate track from walls
     findStartEnd(image,track)#finds red and green spots and generates a tack from it
-    s=convertTrackToString(track)# converts the image to a normalized string
-    img=imageFromTrackStr(s)#converts the string to a new track without blurred line
+    matrix=convertTrackToMatrix(track)# converts the image to a normalized string
+    img=imageFromTrackMatrix(matrix)#converts the string to a new track without blurred line
     img=img.resize((1000,500),Image.Resampling.NEAREST)#upsample to 1000,500 aka 10x curr size
     img=img.filter(ImageFilter.SHARPEN)#adds a separating line between track and walls
     img.save(output)#saves the image in a file
-    return s
+    return matrix

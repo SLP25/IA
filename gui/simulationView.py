@@ -1,17 +1,45 @@
 import pygame
-from utils import parseImage,GRAVEL_TRAP_COLOR,TRACK_COLOR,START_COLOR,FINISH_COLOR
-from Exceptions import POP, QUIT,PERCARVIEW
+from .utils import parseImage,GRAVEL_TRAP_COLOR,TRACK_COLOR,START_COLOR,FINISH_COLOR
+from .exceptions import POP, QUIT,PERCARVIEW
+from .car import Car,generateRandomColor
+import random
+
+from graph.node import Node
+import graph.graph_parser as gp
 
 class SimulationView():
-    def __init__(self,screen,cars,inputImagePath,outputImagePath='final.png'):
+    def __init__(self,screen,algorithm,nCars,inputImagePath,outputImagePath='final.png'):
+
         self.inputImage=inputImagePath
         self.finalImage=outputImagePath
-        self.track=parseImage(self.inputImage,self.finalImage)
+        self.__generateGraph__()
         
         self.screen=screen
-        self.cars=cars
+        self.algorithm=algorithm
+        self.__simulate__(nCars)
         
         self._drawInit_()
+        
+    def __simulate__(self,nCars):
+        """
+           Uses the algorithm in the track to simulate the car
+        """
+        self.cars=[]
+        for i in range(nCars):
+            startingNode=random.choice(self.graph.starts)
+            cost,nodes = self.algorithm.search(self.graph, Node(startingNode[0], startingNode[1], 0, 0), self.graph.finishes)
+            c=Car(0,color=generateRandomColor(),tlen=cost)
+            c.fromNodes(nodes)
+            self.cars.append(c)
+        
+    def __generateGraph__(self):
+        """
+        generates the graph from the input image
+        """
+        matrix = parseImage(self.inputImage,self.finalImage)
+        self.graph=gp.circuit_from_matrix(matrix)
+        
+        
         
     def getExportedFile(self):
         """Gets the path to the background image
@@ -34,7 +62,7 @@ class SimulationView():
         self.timelineCurrPos=0
         self.maxTimelinePos=0
         if self.cars:
-            self.maxTimelinePos = len(self.cars[0].coords)-1
+            self.maxTimelinePos = max(map(lambda car: len(car.coords)-1,self.cars))
         
         
         
@@ -46,7 +74,8 @@ class SimulationView():
             car (Car): the car whose path should be drawn
             timelinePos (int): the timestamp of the line to draw
         """
-        pygame.draw.line(self.screen,car.color,car.coords[timelinePos-1],car.coords[timelinePos],width=car.getCarLineWidthAtInstance(timelinePos))
+        if timelinePos<len(car.coords):
+            pygame.draw.line(self.screen,car.color,car.coords[timelinePos-1],car.coords[timelinePos],width=car.getCarLineWidthAtInstance(timelinePos))
 
     
     def _drawTrackComponent_(self,color,mask):
@@ -68,22 +97,21 @@ class SimulationView():
             QUIT: quits the application
             POP: goes to the previous view
         """
-        for event in pygame.event.get():
-            if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_LEFT:
-                    if self.timelineCurrPos>0: # so it can't go below the start
-                        self.timelineCurrPos-=1
-                if event.key == pygame.K_RIGHT:
-                    if self.timelineCurrPos<self.maxTimelinePos: # so it can't go over the finish
-                            self.timelineCurrPos+=1
-                if event.key == pygame.K_r:
-                    self.__init__(self.screen,self.cars,self.inputImage,self.finalImage)
-                if event.key == pygame.K_p:
-                    raise PERCARVIEW()
-                if event.key == pygame.K_q:
-                    raise QUIT()
-                if event.key == pygame.K_ESCAPE:
-                    raise POP()
+        keys=pygame.key.get_pressed()
+        if keys[pygame.K_LEFT]:
+            if self.timelineCurrPos>0: # so it can't go below the start
+                self.timelineCurrPos-=1
+        if keys[pygame.K_RIGHT]:
+            if self.timelineCurrPos<self.maxTimelinePos: # so it can't go over the finish
+                    self.timelineCurrPos+=1
+        if keys[pygame.K_r]:
+            self.__init__(self.screen,self.cars,self.inputImage,self.finalImage)
+        if keys[pygame.K_p]:
+            raise PERCARVIEW()
+        if keys[pygame.K_q]:
+            raise QUIT()
+        if keys[pygame.K_ESCAPE]:
+            raise POP()
         
     def draw(self):
         """

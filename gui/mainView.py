@@ -1,6 +1,8 @@
 import os
 import pygame
-from Exceptions import POP,QUIT,SIMULATIONVIEW
+from .exceptions import POP,QUIT,SIMULATIONVIEW
+from algorithms.bfs import BFS
+from algorithms.dfs import DFS
 
 UNSELECTED=(255,255,255)
 SELECTED=(100,100,255)
@@ -53,7 +55,7 @@ class MainView():
         self.menus=[
             Menu("track",self.tracks),
             Menu("algorithm",self.algorithms),
-            Menu("Cars",options=[(str(i),str(i)) for i in range(1,100)])
+            Menu("Cars",options=[(str(i),i) for i in range(1,100)])
         ]
         self.currMenu=0
         self.font = pygame.font.SysFont('Comic Sans MS', 30)
@@ -69,21 +71,21 @@ class MainView():
         """
         for event in pygame.event.get():
             if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_LEFT:
+                if event.key==pygame.K_LEFT:
                     self.menus[self.currMenu].prev()
-                if event.key == pygame.K_RIGHT:
+                if event.key==pygame.K_RIGHT:
                     self.menus[self.currMenu].next()
-                if event.key == pygame.K_UP:
+                if event.key==pygame.K_UP:
                     self.prev()
-                if event.key == pygame.K_DOWN:
+                if event.key==pygame.K_DOWN:
                     self.next()
-                if event.key == pygame.K_r:
+                if event.key==pygame.K_r:
                     self.__init__(self.screen)
-                if event.key == pygame.K_q:
+                if event.key==pygame.K_q:
                     raise QUIT()
-                if event.key == pygame.K_ESCAPE:
+                if event.key==pygame.K_ESCAPE:
                     raise POP()
-                if event.key == pygame.K_RETURN:
+                if event.key==pygame.K_RETURN:
                     raise SIMULATIONVIEW()
 
     
@@ -124,7 +126,8 @@ class MainView():
            Defines the algorithm names and values
         """
         self.algorithms=[
-            ("bfs","algfunc"),
+            ("breath-first-search",BFS()),
+            ("depth-first-search",DFS())
         ]
     def getTrackMenuValue(self):
         """Get the value in the current position of the track menu
@@ -133,6 +136,20 @@ class MainView():
             Any: the value of the current option of the track menu
         """
         return self.menus[0].value()
+    def getAlgorithmMenuValue(self):
+        """Get the value in the current position of the algorithm menu
+
+        Returns:
+            Any: the value of the current option of the algorithm menu
+        """
+        return self.menus[1].value()
+    def getNCarsMenuValue(self):
+        """Get the value in the current position of the number of cars menu
+
+        Returns:
+            Any: the value of the current option of the number of cars menu
+        """
+        return self.menus[2].value()
         
     def _showMenu_(self,menu,color,pos):
         """Displays a Menu in a given color and position

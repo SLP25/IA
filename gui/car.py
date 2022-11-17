@@ -20,12 +20,19 @@ class Car:
     averageSpeed=None
     id=-1
     
-    def __init__(self,id,color,pos=[],speeds=[],tlen=0):
+    def __init__(self,id,color,tlen=0):
         self.id=id
         self.color=color
         self.tlen=tlen
-        self.coords=pos
-        self.speedinCoords=speeds
+        self.coords=[]
+        self.speedinCoords=[]
+        
+        
+    def fromNodes(self,nodes):
+        for node in nodes:
+            x,y,vx,vy=node.deserialize()    
+            self.coords.append((x*10,y*10))
+            self.speedinCoords.append((vx,vy))
         self.npVspeed=np.array(list(map(self.__vectorNorm__,self.speedinCoords)))
     
     def getCarPosAtInstance(self,instance=0):
@@ -37,6 +44,8 @@ class Car:
         Returns:
             tuple: a tuple with the coordnats at that instance
         """
+        if instance>len(self.coords)-1:
+            instance=-1
         return self.coords[instance]
     
     def getTopSpeed(self):
@@ -120,6 +129,8 @@ class Car:
         Returns:
             float: the Norm of the speed at the given position
         """
+        if instance>len(self.speedinCoords):
+            instance=-1
         return self.__vectorNorm__(self.speedinCoords[instance])
     
     def getCarLineWidthAtInstance(self,instance=0):

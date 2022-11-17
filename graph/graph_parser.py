@@ -10,11 +10,11 @@ normal_cost = 1
 
 def circuit_from_file(filePath):
     matrix = matrix_from_file(filePath)
-    graph = Graph()
+    g = Graph()
     (rows, cols) = get_matrix_dimensions(matrix)
-    __set_start_and_finish__(graph, matrix, rows, cols)
-    __transverse_circuit__(graph, matrix, rows, cols)
-    return graph
+    __set_start_and_finish__(g, matrix, rows, cols)
+    __transverse_circuit__(g, matrix, rows, cols)
+    return g
 
 def matrix_from_file(filePath):
     matrix = []
@@ -27,7 +27,6 @@ def matrix_from_file(filePath):
     except IOError:
         print("Could not open " + filePath + " for reading")
         exit(1)
-        
     return matrix
 
 def get_matrix_dimensions(matrix):
@@ -46,31 +45,30 @@ def get_matrix_dimensions(matrix):
 
 def circuit_from_matrix(matrix):
     (rows, cols) = get_matrix_dimensions(matrix)
-    graph = Graph()
-    (rows, cols) = get_matrix_dimensions(matrix)
-    __set_start_and_finish__(graph, matrix, rows, cols)
-    __transverse_circuit__(graph, matrix, rows, cols)
-    return graph
+    g = Graph()
+    __set_start_and_finish__(g, matrix, rows, cols)
+    __transverse_circuit__(g, matrix, rows, cols)
+    return g
 
-def __set_start_and_finish__(graph, matrix, rows, cols):
+def __set_start_and_finish__(g, matrix, rows, cols):
     for y in range(0,rows):
         for x in range(0, cols):
             if matrix[y][x] == start:
-                graph.add_start(x, y)
+                g.add_start(x, y)
             if matrix[y][x] == end:
-                graph.add_finish(x, y)
+                g.add_finish(x, y)
                 
-    if graph.starts == []:
+    if g.starts == []:
         print("Starting position not found")
         exit(1)
-    if graph.finishes == []:
+    if g.finishes == []:
         print("No finish line detected")
         exit(1)
 
 
-def __transverse_circuit__(graph, matrix, rows, cols):
+def __transverse_circuit__(g, matrix, rows, cols):
     accelerations = [(-1,-1),(-1,0),(-1,1),(0,-1),(0,0),(0,1),(1,-1),(1,0),(1,1)]
-    visited = set(map(lambda xy: Node(xy[0], xy[1], 0, 0), graph.starts))
+    visited = set(map(lambda xy: Node(xy[0], xy[1], 0, 0), g.starts))
     to_visit = set(visited)
     
     while len(to_visit) != 0:
@@ -81,7 +79,7 @@ def __transverse_circuit__(graph, matrix, rows, cols):
             if __test_colision__(matrix, rows, cols, node.x, node.y, neightbour.x, neightbour.y):
                 neightbour = Node(node.x, node.y, 0, 0)
                 cost = wall_cost
-            graph.add_edge(node, neightbour, cost)
+            g.add_edge(node, neightbour, cost)
             if neightbour not in visited:
                 visited.add(neightbour)
                 to_visit.add(neightbour)
