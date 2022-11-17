@@ -3,11 +3,11 @@ from .node import Node
 class Graph:
     def __init__(self, adjList = {}, nodes = set(),
                  starts = [], finishes = [], directed = True):
-        self.adjList = adjList
-        self.nodes = nodes
-        self.directed = directed
-        self.starts = starts
-        self.finishes = finishes
+        self.adjList = {}
+        self.nodes = set()
+        self.directed = True
+        self.starts = []
+        self.finishes =  []
 
     def add_edge(self, src_node, dest_node, cost):
         if src_node not in self.nodes:
