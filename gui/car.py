@@ -47,6 +47,18 @@ class Car:
         if instance>len(self.coords)-1:
             instance=-1
         return self.coords[instance]
+    def getCarSpeedAtInstance(self,instance=0):
+        """gets the coordenats the car is at in a given instance
+
+        Args:
+            instance (int, optional): timestamp to get position at. Defaults to 0.
+
+        Returns:
+            tuple: a tuple with the coordnats at that instance
+        """
+        if instance>len(self.speedinCoords)-1:
+            instance=-1
+        return self.speedinCoords[instance]
     
     def getTopSpeed(self):
         """Calculates the top Speed of the car

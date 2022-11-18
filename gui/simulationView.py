@@ -31,6 +31,62 @@ class SimulationView():
             c=Car(0,color=generateRandomColor(),tlen=cost)
             c.fromNodes(nodes)
             self.cars.append(c)
+            
+    def __draw_speed_arrow_(self,car):
+        """Draws in the screen a arrow representing the speed vector of a given car at the current timeline moment
+
+        Args:
+            car (Car): the car to get the speed from
+        """
+
+        body_width=4
+        head_width=8
+        
+        start=pygame.math.Vector2(car.getCarPosAtInstance(self.timelineCurrPos))
+        speed=pygame.math.Vector2(car.getCarSpeedAtInstance(self.timelineCurrPos))*10#sinse the speeds are in the 50*100 representation not upscaled
+        end=start+speed
+        
+        arrow = start - end
+        angle = arrow.angle_to(pygame.Vector2(0, -1))
+        
+        body_length = arrow.length() *0.8
+        head_height = arrow.length() *0.2
+        
+        # Vector for the arrow head
+        head_verts = [
+            pygame.Vector2(0, head_height / 2),  # Center
+            pygame.Vector2(head_width / 2, -head_height / 2),  # Bottomright
+            pygame.Vector2(-head_width / 2, -head_height / 2),  # Bottomleft
+        ]
+        # rotation of the head to match the speed direction
+        translation = pygame.Vector2(0, arrow.length() - (head_height / 2)).rotate(-angle)
+        for i in range(len(head_verts)):
+            head_verts[i].rotate_ip(-angle)
+            head_verts[i] += translation
+            head_verts[i] += start
+    
+        #draw head
+        pygame.draw.polygon(self.screen, car.color, head_verts)
+    
+        # Stop weird shapes when the arrow is shorter than arrow head
+        if arrow.length() >= head_height:
+            # Vector for the arrow body
+            body_verts = [
+                pygame.Vector2(-body_width / 2, body_length / 2),  # Topleft
+                pygame.Vector2(body_width / 2, body_length / 2),  # Topright
+                pygame.Vector2(body_width / 2, -body_length / 2),  # Bottomright
+                pygame.Vector2(-body_width / 2, -body_length / 2),  # Bottomleft
+            ]
+            # rotation of the body to match the speed direction
+            translation = pygame.Vector2(0, body_length / 2).rotate(-angle)
+            for i in range(len(body_verts)):
+                body_verts[i].rotate_ip(-angle)
+                body_verts[i] += translation
+                body_verts[i] += start
+            #draw body
+            pygame.draw.polygon(self.screen, car.color, body_verts)
+
+
         
     def __generateGraph__(self):
         """
@@ -126,6 +182,7 @@ class SimulationView():
         
         for car in self.cars:
             pygame.draw.circle(self.screen,car.color,car.getCarPosAtInstance(self.timelineCurrPos), 5)
+            self.__draw_speed_arrow_(car)
             if self.timelineCurrPos!=0:
                 for i in range(1,self.timelineCurrPos+1):
                     self._drawCarLines_(car,i)
