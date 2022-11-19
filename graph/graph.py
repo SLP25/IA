@@ -1,26 +1,20 @@
 from .node import Node
 
 class Graph:
-    def __init__(self, adjList = {}, nodes = [], estimates = {}, 
-                 start = [], finish = [], directed = False):
-        self.adjList = adjList
-        self.nodes = nodes
-        self.directed = directed
-        self.estimates = estimates
-        self.start = start
-        self.finish = finish
+    def __init__(self, adjList = {}, nodes = set(),
+                 starts = [], finishes = [], directed = True):
+        self.adjList = {}
+        self.nodes = set()
+        self.directed = True
+        self.starts = []
+        self.finishes =  []
 
     def add_edge(self, src_node, dest_node, cost):
-        n1 = Node(src_node)
-        n2 = Node(dest_node)
+        if src_node not in self.nodes:
+            self.nodes.add(src_node)
 
-        if n1 not in self.nodes:
-            n1.setId(len(self.nodes))
-            self.nodes.append(n1)
-
-        if n2 not in self.nodes:
-            n2.setId(len(self.nodes))
-            self.nodes.append(n2)
+        if dest_node not in self.nodes:
+            self.nodes.add(dest_node)
 
         if src_node not in self.adjList.keys():
             self.adjList[src_node] = set()
@@ -33,11 +27,8 @@ class Graph:
         if not self.directed:
             self.adjList[dest_node].add((src_node, cost))
 
-    def add_estimate(self, node, value):
-        self.estimates[node] = value
+    def add_start(self, x, y):
+        self.starts.append((x,y))
 
-    def add_start(self, node):
-        self.start.append(node)
-
-    def add_finish(self, node):
-        self.finish.append(node)
+    def add_finish(self, x, y):
+        self.finishes.append((x,y))
