@@ -25,6 +25,20 @@ class Node:
     def __gen_estimate__(self, finishes):
         return min(map(lambda f: max(__estimateAxis__(self.x,self.vx,f[0]),
                                      __estimateAxis__(self.y,self.vy,f[1])), finishes))
+    def __gt__(self, other):
+        selfSpeedNorm=self.vx**2+self.vy**2
+        otherSpeedNorm=other.vx**2+other.vy**2
+        if selfSpeedNorm > otherSpeedNorm:
+            return True
+        elif selfSpeedNorm < otherSpeedNorm:
+            return False
+        else:
+            selfPosNorm  = self.x**2+self.y**2
+            otherPosNorm = other.x**2+other.y**2
+            if selfPosNorm > otherPosNorm:
+                return True
+            else: 
+                return False
         
     def deserialize(self):
         return (self.x, self.y, self.vx, self.vy)

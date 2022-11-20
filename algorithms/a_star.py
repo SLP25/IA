@@ -7,6 +7,10 @@ class A_STAR(Algorithm):
     """
     Class implementing a a*-search algorithm
     """
+    
+    
+    
+    
     def search(
         self,
         graph,
@@ -14,10 +18,10 @@ class A_STAR(Algorithm):
         end_nodes,
         ):
 
-        open_queue = PriorityQueue()
-        open_queue.put((0 + start_node.__estimate__, start_node))
+        opened_queue = PriorityQueue()
+        opened_queue.put((0 + start_node.getEstimate(end_nodes), start_node))
 
-        close_set = set([])
+        closed_set = set([])
 
         parents = {}
         parents[start_node] = start_node
@@ -25,38 +29,37 @@ class A_STAR(Algorithm):
         g = {}
         g[start_node] = 0
 
-        while not open_queue.empty():
-            (current_node, current_node_cost) = open_queue.delete()
+        while not opened_queue.empty():
+            (current_node_cost, current_node) = opened_queue.get()
+            print(current_node_cost,current_node)
 
-            if (current_node.x, current_node.y) in graph.finishes:
-                return (current_node_cost + current_node.__estimate__,
+            if current_node in end_nodes:
+                return (current_node_cost + current_node.getEstimate(end_nodes),
                         self.__reconstruct_path__((start_node,
                         current_node, current_node_cost, parents)))
 
             for edge in graph.adjList[current_node]:
-                neighbor_node = list(edge)[0]
-                edge_cost = list(edge)[1]
-
-                if neighbor_node not in open_queue and neighbor_node \
+                neighbor_node = edge[0]
+                edge_cost = edge[1]
+                if not any(neighbor_node in node for node in opened_queue.queue) and neighbor_node \
                     not in closed_set:
                     parents[neighbor_node] = current_node
                     g[neighbor_node] = g[current_node] + edge_cost
-                    open_queue.put(g[neighbor_node]
-                                   + neighbor_node.__estimate__,
-                                   neighbor_node)
+                    opened_queue.put((g[neighbor_node]
+                                   + neighbor_node.getEstimate(end_nodes),
+                                   neighbor_node))
                 else:
-
                     if g[neighbor_node] > g[current_node] + edge_cost:
                         g[neighbor_node] = g[current_node] + edge_cost
                         parents[neighbor_node] = current_node
 
                         if neighbor_node in closed_set:
                             closed_set.remove(neighbor_node)
-                            open_queue.put(g[neighbor_node]
-                                    + neighbor_node.__estimate__,
-                                    neighbor_node)
+                            opened_queue.put((g[neighbor_node]
+                                    + neighbor_node.getEstimate(end_nodes),
+                                    neighbor_node))
 
-            open_queue.delete(current_node)
+            opened_queue.get(current_node)
             closed_set.add(current_node)
 
         return None
