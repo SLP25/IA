@@ -31,12 +31,12 @@ class A_STAR(Algorithm):
 
         while not opened_queue.empty():
             (current_node_cost, current_node) = opened_queue.get()
-            print(current_node_cost,current_node)
+            print(current_node,end_nodes)
 
-            if current_node in end_nodes:
+            if (current_node.x,current_node.y) in end_nodes:
                 return (current_node_cost + current_node.getEstimate(end_nodes),
-                        self.__reconstruct_path__((start_node,
-                        current_node, current_node_cost, parents)))
+                        self.__reconstruct_path__(start_node,
+                        current_node, current_node_cost, parents))
 
             for edge in graph.adjList[current_node]:
                 neighbor_node = edge[0]
@@ -65,6 +65,7 @@ class A_STAR(Algorithm):
         return None
 
     def __reconstruct_path__(
+        self,
         start_node,
         current_node,
         current_node_cost,
