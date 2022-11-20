@@ -68,7 +68,9 @@ def getImageAsBW(image):
         List[List[String]]: List with the rows (List of each square)
     """
     image=image.convert("1")
+    image.save("blackAndWhite.png")
     image=image.resize((100,50),Image.Resampling.NEAREST)
+    image.save("blackAndWhiteReduced.png")
     f=[]
     for j in np.array(image):
         f.append(['X' if i else '-' for i in j])
@@ -104,7 +106,9 @@ def findStartEnd(image,track):
     indices=np.dstack(indices)[0]
     indices =reduce(np.round(indices,-1))
     indices = np.unique(indices,axis=0)
+    print("start")
     for start in indices:
+        print((start[0],start[1]))
         track[start[0]][start[1]] = 'P'
     #red
     
@@ -113,7 +117,9 @@ def findStartEnd(image,track):
     indices=np.dstack(indices)[0]
     indices =reduce(np.round(indices,-1))
     indices = np.unique(indices,axis=0)
+    print("finish")
     for finish in indices:
+        print((finish[0],finish[1]))
         track[finish[0]][finish[1]] = 'F'
     return track
 
@@ -147,12 +153,18 @@ def parseImage(path,output):
     """
     image=Image.open(path)
     image=image.resize((1000,500),Image.Resampling.NEAREST)# normalize image to 1000,500
-    image=increaseColors(image)# brighten ups to be easier to detect colors
+    image.save("upsampled.png")
+    bw=increaseColors(image)# brighten ups to be easier to detect colors
+    bw.save("coloredUp.png")
     track = getImageAsBW(image)#black and white to be easier to separate track from walls
-    findStartEnd(image,track)#finds red and green spots and generates a tack from it
+    findStartEnd(bw,track)#finds red and green spots and generates a tack from it
     matrix=convertTrackToMatrix(track)# converts the image to a normalized string
+    for r in matrix:
+        print(r)
     img=imageFromTrackMatrix(matrix)#converts the string to a new track without blurred line
     img=img.resize((1000,500),Image.Resampling.NEAREST)#upsample to 1000,500 aka 10x curr size
     img=img.filter(ImageFilter.SHARPEN)#adds a separating line between track and walls
     img.save(output)#saves the image in a file
     return matrix
+
+

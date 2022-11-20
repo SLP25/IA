@@ -43,10 +43,10 @@ class GUI:
                 pygame.QUIT()
                 self.running=False
             except PERCARVIEW:
-                p=PerCarView(self.screen,self.views[-1].cars,self.views[-1].getExportedFile())
+                p=PerCarView(self.screen,self.views[-1].cars,self.views[-1].getTrackComponents())
                 self.views.append(p)
             except SIMULATIONVIEW:
-                self.views.append(SimulationView(self.screen,self.views[-1].getAlgorithmMenuValue(),self.views[-1].getNCarsMenuValue(),self.views[-1].getTrackMenuValue(),'final.png'))
+                self.views.append(SimulationView(self.screen,self.views[-1].getAlgorithmMenuValue(),self.views[-1].getNCarsMenuValue(),self.views[-1].getTrackMenuValue()))
                 
             pygame.display.update()
             pygame.event.clear()

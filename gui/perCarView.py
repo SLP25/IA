@@ -4,9 +4,9 @@ from .exceptions import POP, QUIT
 
 class PerCarView():
     
-    def __init__(self,screen,cars,ImagePath='final.png'):
+    def __init__(self,screen,cars,trackComponents):
         self.font = pygame.font.SysFont('Comic Sans MS', 12)
-        self.finalImage=ImagePath
+        self.trackComponents=trackComponents
         
         self.screen=screen
         self.cars=cars
@@ -14,20 +14,7 @@ class PerCarView():
         self.maxCar=len(cars)-1
         self.currCar= -1 if self.maxCar==-1 else 0 #if non existing cars then -1 else 0
         
-        self._drawInit_()
-    
-    def _drawInit_(self):
-        """
-           creates Masks for the positions of the start,finish and track
-        """
-        backGroundImage = pygame.image.load(self.finalImage)
-        
-        self.trackmask=pygame.mask.from_threshold(backGroundImage, TRACK_COLOR,threshold=(1,1,1)).outline()
-        self.startmask=pygame.mask.from_threshold(backGroundImage,START_COLOR,threshold=(1,1,1) ).outline()
-        self.finishmask=pygame.mask.from_threshold(backGroundImage,FINISH_COLOR,threshold=(1,1,1)).outline()
-        
-        
-        
+
         
     def _drawCarLines_(self,car,timelinePos):
         """Draws the line of the car moving in a given timestamp
@@ -37,17 +24,6 @@ class PerCarView():
             timelinePos (int): the timestamp of the current line to draw
         """
         pygame.draw.line(self.screen,car.color,car.coords[timelinePos-1],car.coords[timelinePos],width=car.getCarLineWidthAtInstance(timelinePos))
-
-
-    def _drawTrackComponent_(self,color,mask):
-        """Draws a track component given a color and a mask
-
-        Args:
-            color (Pygame mask): the color to paint the component in
-            mask (_type_): the mask to use as a stencil
-        """
-        pygame.draw.polygon(self.screen,color,mask,width=12)
-        pygame.draw.polygon(self.screen,color,mask,width=0)
         
         
     def _eventHandler_(self):
@@ -104,10 +80,7 @@ class PerCarView():
            Draws the background,components,track
            Handles keyboard events given and draws the car with its path
         """
-        self.screen.fill(pygame.Color(GRAVEL_TRAP_COLOR))
-        self._drawTrackComponent_(TRACK_COLOR,self.trackmask)
-        self._drawTrackComponent_(FINISH_COLOR,self.finishmask)
-        self._drawTrackComponent_(START_COLOR,self.startmask)
+        self.screen.blit(self.trackComponents, (0,0))
         self._drawStats_()
         
         self._eventHandler_()
