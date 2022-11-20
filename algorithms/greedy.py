@@ -19,7 +19,7 @@ class GREDDY(Algorithm):
         return (self.__reconstruct_path__(previous, current), total)
 
 
-    def __reconstruct_path__(self,previous, end):
+    def __reconstruct_path__(self, previous, end):
         path = []
 
         while end != None:
