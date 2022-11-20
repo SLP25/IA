@@ -108,9 +108,9 @@ class SimulationView():
         """
         image =  pygame.image.load(self.inputImage)
         resized_image=pygame.transform.scale(image,self.mapSize)
-        greens=pygame.mask.from_threshold(resized_image,(0,255,0),threshold=(5, 20, 5, 255))
-        reds=pygame.mask.from_threshold(resized_image,(255,0,0),threshold=(20, 5, 5, 255))
-        blacks=pygame.mask.from_threshold(resized_image,(0,0,0),threshold=(20, 20, 20, 255))
+        greens=pygame.mask.from_threshold(resized_image,(0,255,0),threshold=(30, 50, 30, 255))
+        reds=pygame.mask.from_threshold(resized_image,(255,0,0),threshold=(50, 30, 30, 255))
+        blacks=pygame.mask.from_threshold(resized_image,(0,0,0),threshold=(100, 100, 100, 255))
         
         self.trackComponents=pygame.Surface(self.mapSize)
         self.matrix=[]
