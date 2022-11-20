@@ -141,7 +141,7 @@ class SimulationView():
             color (Pygame Color): color of the track component
             mask (Pygame Masks): the mask to fill with the color
         """
-        pygame.draw.polygon(self.screen,color,mask,width=12)
+        pygame.draw.polygon(self.screen,color,mask,width=6)
         pygame.draw.polygon(self.screen,color,mask,width=0)
         
         
