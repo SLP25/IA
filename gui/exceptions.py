@@ -1,23 +1,36 @@
-class QUIT(Exception):
+class GUIException(Exception):
+    """base gui exeption
+
+    Args:
+        Exception (Exception): exc
+    """
+    pass
+
+class QUIT(GUIException):
     """exception to quit the application
 
     Args:
-        Exception (Exception): exc
+        Exception (GUIException): exc
     """
     pass
-class POP(Exception):
+class POP(GUIException):
     """exception to go back to the previous view if it exists
 
     Args:
-        Exception (Exception): exc
+        Exception (GUIException): exc
     """
     pass
-class PERCARVIEW(Exception):
+class PERCARVIEW(GUIException):
     """exception to go to the per car view
 
     Args:
-        Exception (Exception): exc
+        Exception (GUIException): exc
     """
     pass
-class SIMULATIONVIEW(Exception):
+class SIMULATIONVIEW(GUIException):
+    """exception to go to the simulation view
+
+    Args:
+        Exception (GUIException): exc
+    """
     pass
