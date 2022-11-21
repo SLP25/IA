@@ -19,7 +19,7 @@ class BFS(Algorithm):
             node, cost,prev = queue.get(0)
 
             #found the finish
-            if (node.x,node.y) in graph.finishes:
+            if (node.x,node.y) in end_nodes:
                 return (cost, self.__reconstruct_path__((node, cost, prev)))
             
             #didn't find it so will add the nodes connected to it

@@ -8,26 +8,32 @@ from graph.node import Node
 import graph.graph_parser as gp
 
 class SimulationView():
-    def __init__(self,screen,algorithm,nCars,inputImagePath,outputImagePath='final.png'):
-
-        self.inputImage=inputImagePath
-        self.finalImage=outputImagePath
-        self.__generateGraph__()
+    def __init__(self,screen,algorithm,nCars,inputImagePath):
         
+        self.mapSize=(100,50)
+        self.desiredSize=(1000,500)
+        self.inputImage=inputImagePath
         self.screen=screen
+        self._drawInit_()
+        self.graph=gp.circuit_from_matrix(self.matrix)
+        
+
         self.algorithm=algorithm
         self.__simulate__(nCars)
         
-        self._drawInit_()
+
         
     def __simulate__(self,nCars):
         """
            Uses the algorithm in the track to simulate the car
         """
+        self.timelineCurrPos=0
+        self.maxTimelinePos=0
         self.cars=[]
         for i in range(nCars):
             startingNode=random.choice(self.graph.starts)
             cost,nodes = self.algorithm.search(self.graph, Node(startingNode[0], startingNode[1], 0, 0), self.graph.finishes)
+            self.maxTimelinePos=max(self.maxTimelinePos,len(nodes))
             c=Car(0,color=generateRandomColor(),tlen=cost)
             c.fromNodes(nodes)
             self.cars.append(c)
@@ -85,40 +91,46 @@ class SimulationView():
                 body_verts[i] += start
             #draw body
             pygame.draw.polygon(self.screen, car.color, body_verts)
-
-
-        
-    def __generateGraph__(self):
-        """
-        generates the graph from the input image
-        """
-        matrix = parseImage(self.inputImage,self.finalImage)
-        self.graph=gp.circuit_from_matrix(matrix)
         
         
         
-    def getExportedFile(self):
-        """Gets the path to the background image
+    def getTrackComponents(self):
+        """Gets the surface of the track
 
         Returns:
-            string: the path to the 
+            Pygame.Surface: the surface of the track
         """
-        return self.finalImage
+        return self.trackComponents
     
     def _drawInit_(self):
         """
-           creates mask for the track components and defines max timeline position
+           creates surfaces for the track components and defines max timeline position
         """
-        backGroundImage = pygame.image.load(self.finalImage)
+        image =  pygame.image.load(self.inputImage)
+        resized_image=pygame.transform.scale(image,self.mapSize)
+        greens=pygame.mask.from_threshold(resized_image,(0,255,0),threshold=(30, 50, 30, 255))
+        reds=pygame.mask.from_threshold(resized_image,(255,0,0),threshold=(50, 30, 30, 255))
+        blacks=pygame.mask.from_threshold(resized_image,(0,0,0),threshold=(100, 100, 100, 255))
         
-        self.trackmask=pygame.mask.from_threshold(backGroundImage, TRACK_COLOR,threshold=(1,1,1)).outline()
-        self.startmask=pygame.mask.from_threshold(backGroundImage,START_COLOR,threshold=(1,1,1) ).outline()
-        self.finishmask=pygame.mask.from_threshold(backGroundImage,FINISH_COLOR,threshold=(1,1,1)).outline()
-        
-        self.timelineCurrPos=0
-        self.maxTimelinePos=0
-        if self.cars:
-            self.maxTimelinePos = max(map(lambda car: len(car.coords)-1,self.cars))
+        self.trackComponents=pygame.Surface(self.mapSize)
+        self.matrix=[]
+        for r in range(self.mapSize[1]):
+            f=''
+            for c in range(self.mapSize[0]):
+                if greens.get_at((c,r)):
+                    f+='P'
+                    self.trackComponents.set_at((c, r), START_COLOR)
+                elif reds.get_at((c,r)):
+                    f+='F'
+                    self.trackComponents.set_at((c, r), FINISH_COLOR)
+                elif blacks.get_at((c,r)):
+                    f+='-'
+                    self.trackComponents.set_at((c, r), TRACK_COLOR)
+                else:
+                    f+='X'
+                    self.trackComponents.set_at((c, r), GRAVEL_TRAP_COLOR)
+            self.matrix.append(f)
+        self.trackComponents=pygame.transform.scale(self.trackComponents,self.desiredSize)
         
         
         
@@ -133,18 +145,7 @@ class SimulationView():
         if timelinePos<len(car.coords):
             pygame.draw.line(self.screen,car.color,car.coords[timelinePos-1],car.coords[timelinePos],width=car.getCarLineWidthAtInstance(timelinePos))
 
-    
-    def _drawTrackComponent_(self,color,mask):
-        """Draws a track component from a mask and color
 
-        Args:
-            color (Pygame Color): color of the track component
-            mask (Pygame Masks): the mask to fill with the color
-        """
-        pygame.draw.polygon(self.screen,color,mask,width=12)
-        pygame.draw.polygon(self.screen,color,mask,width=0)
-        
-        
     def _eventHandler_(self):
         """Handles keyboard event within the view
 
@@ -172,12 +173,8 @@ class SimulationView():
     def draw(self):
         """
            Draws the view filling with the background color,the components,handles events and shows the cars up to the current isntance
-        """
-        self.screen.fill(pygame.Color(GRAVEL_TRAP_COLOR))
-        self._drawTrackComponent_(TRACK_COLOR,self.trackmask)
-        self._drawTrackComponent_(FINISH_COLOR,self.finishmask)
-        self._drawTrackComponent_(START_COLOR,self.startmask)
-        
+        """        
+        self.screen.blit(self.trackComponents,(0,0))
         self._eventHandler_()
         
         for car in self.cars:

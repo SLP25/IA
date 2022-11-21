@@ -16,7 +16,7 @@ class GREDDY(Algorithm):
             previous[next] = current
             total += next_cost
             current = next
-        return (self.__reconstruct_path__(previous, current), total)
+        return (total,self.__reconstruct_path__(previous, current))
 
 
     def __reconstruct_path__(self, previous, end):
