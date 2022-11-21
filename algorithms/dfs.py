@@ -1,13 +1,25 @@
 from algorithms.algorithm import Algorithm
+from graph.graph import Graph
+from graph.node import Node
 
 class DFS(Algorithm):
     """
     Class implementing a depth-first-search algorithm
     """
-    def search(self, graph, start_node, end_nodes):
+    def search(self, graph:Graph, start_node:Node, end_nodes:list):
+        """Searches the graph startign on start_node until reaching one of the end_nodes using th dfs algorithm
+
+        Args:
+            graph (Graph): the graph to search the path in
+            start_node (Node): the node to start the search in 
+            end_nodes ([(Int,Int)]): the list of all position corresponding to end Nodes
+
+        Returns:
+            (int,[Node]): pair with the total distance travels and the path taken to reach the end
+        """
         return self.__search_aux__(graph, start_node, end_nodes, set())
 
-    def __search_aux__(self, graph, start_node, end_nodes, visited):
+    def __search_aux__(self, graph:Graph, start_node:Node, end_nodes:list, visited:set):
         """Auxiliary method for the main search method
 
         Args:

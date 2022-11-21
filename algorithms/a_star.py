@@ -7,17 +7,23 @@ class A_STAR(Algorithm):
     """
     Class implementing a a*-search algorithm
     """
-    
-    
-    
-    
     def search(
+        
         self,
-        graph,
-        start_node,
-        end_nodes,
+        graph:Graph,
+        start_node:Node,
+        end_nodes:list,
         ):
+        """Searches the graph startign on start_node until reaching one of the end_nodes using th A* algorithm
 
+        Args:
+            graph (Graph): the graph to search the path in
+            start_node (Node): the node to start the search in 
+            end_nodes ([(Int,Int)]): the list of all position corresponding to end Nodes
+
+        Returns:
+            (int,[Node]): pair with the total distance travels and the path taken to reach the end
+        """
         opened_queue = PriorityQueue()
         opened_queue.put((0 + start_node.getEstimate(end_nodes), start_node))
 
@@ -35,7 +41,7 @@ class A_STAR(Algorithm):
             if (current_node.x,current_node.y) in end_nodes:
                 return (current_node_cost + current_node.getEstimate(end_nodes),
                         self.__reconstruct_path__(start_node,
-                        current_node, current_node_cost, parents))
+                        current_node,parents))
 
             for edge in graph.adjList[current_node]:
                 neighbor_node = edge[0]
@@ -65,11 +71,21 @@ class A_STAR(Algorithm):
 
     def __reconstruct_path__(
         self,
-        start_node,
-        current_node,
-        current_node_cost,
-        parents,
+        start_node : Node,
+        current_node : Node,
+        parents : dict,
         ):
+        """_summary_
+
+        Args:
+            start_node (Node): the starting node
+            current_node (Node): the node it was searching for
+            parents (dict): the dictionary containing the parent of each node
+
+        Returns:
+            list: the path taken from the start up to the end
+        """
+
         path = []
 
         while parents[current_node] != current_node:
