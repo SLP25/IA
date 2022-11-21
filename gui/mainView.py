@@ -4,6 +4,7 @@ from .exceptions import POP,QUIT,SIMULATIONVIEW
 from algorithms.bfs import BFS
 from algorithms.dfs import DFS
 from algorithms.greedy import GREDDY
+from algorithms.a_star import A_STAR
 
 UNSELECTED=(255,255,255)
 SELECTED=(100,100,255)
@@ -129,7 +130,8 @@ class MainView():
         self.algorithms=[
             ("breath-first-search",BFS()),
             ("depth-first-search",DFS()),
-            ("greddy",GREDDY())
+            ("greddy",GREDDY()),
+            ("a_star",A_STAR())
         ]
     def getTrackMenuValue(self):
         """Get the value in the current position of the track menu

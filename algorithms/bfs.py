@@ -20,7 +20,7 @@ class BFS(Algorithm):
 
             #found the finish
             if (node.x,node.y) in end_nodes:
-                return (cost,self.__reconstruct_path__((node, cost, prev)))
+                return (cost, self.__reconstruct_path__((node, cost, prev)))
             
             #didn't find it so will add the nodes connected to it
             for (n,c) in graph.adjList[node]:
