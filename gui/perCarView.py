@@ -1,10 +1,18 @@
 import pygame
-from .utils import parseImage,GRAVEL_TRAP_COLOR,TRACK_COLOR,START_COLOR,FINISH_COLOR
 from .exceptions import POP, QUIT
 
 class PerCarView():
-    
+    """
+        The view class to show individual cars on track and their statistics
+    """
     def __init__(self,screen,cars,trackComponents):
+        """creates an instance of the PerCarView class
+
+        Args:
+            screen (Pygame display): the screen were to draw
+            cars (list): a list of all cars to be drawn
+            trackComponents (surface): the background surface of the track
+        """
         self.font = pygame.font.SysFont('Comic Sans MS', 12)
         self.trackComponents=trackComponents
         

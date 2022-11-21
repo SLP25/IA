@@ -1,11 +1,11 @@
 import pygame
 
 from threading import Thread
-from .car import Car,generateRandomColor
 from .simulationView import SimulationView
 from .perCarView import PerCarView
 from .mainView import MainView
 from .exceptions import POP,QUIT,PERCARVIEW,SIMULATIONVIEW
+from graph.exceptions import InvalidCircuit
 import sys
         
             
@@ -14,7 +14,13 @@ sys.setrecursionlimit(10**6)
 
 
 class GUI:
+    """
+       Class for the handler of the multiple views
+    """
     def __init__(self):
+        """
+           creates a new object of the GUI Class
+        """
         pygame.init()
         self.clock = pygame.time.Clock()
         self.screen = pygame.display.set_mode((1000,500))
@@ -33,23 +39,26 @@ class GUI:
         while self.running:
             self.clock.tick(20)
             if len(self.views)==0:
-                pygame.QUIT()
-                self.running=False
+                break
             try:
                 self.views[-1].draw()
             except POP:
                 self.views.pop()
             except QUIT:
-                pygame.QUIT()
-                self.running=False
+                break
             except PERCARVIEW:
                 p=PerCarView(self.screen,self.views[-1].cars,self.views[-1].getTrackComponents())
                 self.views.append(p)
             except SIMULATIONVIEW:
-                self.views.append(SimulationView(self.screen,self.views[-1].getAlgorithmMenuValue(),self.views[-1].getNCarsMenuValue(),self.views[-1].getTrackMenuValue()))
-                
+                try:
+                    self.views.append(SimulationView(self.screen,self.views[-1].getAlgorithmMenuValue(),self.views[-1].getNCarsMenuValue(),self.views[-1].getTrackMenuValue()))
+                except InvalidCircuit as e:
+                    print(e)
+                except Exception as e:
+                    print(e)
             pygame.display.update()
             pygame.event.clear()
+        sys.exit()
                                  
     def run(self):
         """
@@ -70,5 +79,4 @@ class GUI:
 
 
 g=GUI()
-
 g.run()

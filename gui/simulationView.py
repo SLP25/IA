@@ -1,5 +1,5 @@
 import pygame
-from .utils import parseImage,GRAVEL_TRAP_COLOR,TRACK_COLOR,START_COLOR,FINISH_COLOR
+from .utils import GRAVEL_TRAP_COLOR,TRACK_COLOR,START_COLOR,FINISH_COLOR
 from .exceptions import POP, QUIT,PERCARVIEW
 from .car import Car,generateRandomColor
 import random
@@ -8,8 +8,10 @@ from graph.node import Node
 import graph.graph_parser as gp
 
 class SimulationView():
+    """
+       the view to show the simulation ocuring
+    """
     def __init__(self,screen,algorithm,nCars,inputImagePath):
-        
         self.mapSize=(100,50)
         self.desiredSize=(1000,500)
         self.inputImage=inputImagePath
@@ -30,13 +32,22 @@ class SimulationView():
         self.timelineCurrPos=0
         self.maxTimelinePos=0
         self.cars=[]
-        for i in range(nCars):
-            startingNode=random.choice(self.graph.starts)
-            cost,nodes = self.algorithm.search(self.graph, Node(startingNode[0], startingNode[1], 0, 0), self.graph.finishes)
+        startingNodes=random.choices(self.graph.starts,k=nCars)
+        simulationNeeded={}
+        
+        for node in startingNodes:
+            if node not in simulationNeeded:
+                simulationNeeded[node]=[]
+            simulationNeeded[node].append(generateRandomColor())
+        
+        for node,colors in simulationNeeded.items():
+            cost,nodes = self.algorithm.search(self.graph, Node(node[0], node[1], 0, 0), self.graph.finishes)
             self.maxTimelinePos=max(self.maxTimelinePos,len(nodes))
-            c=Car(0,color=generateRandomColor(),tlen=cost)
-            c.fromNodes(nodes)
-            self.cars.append(c)
+            for color in colors:
+                c=Car(color=color,tlen=cost)
+                c.fromNodes(nodes)
+                self.cars.append(c)
+
             
     def __draw_speed_arrow_(self,car):
         """Draws in the screen a arrow representing the speed vector of a given car at the current timeline moment

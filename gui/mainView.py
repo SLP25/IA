@@ -50,10 +50,18 @@ class Menu():
 
 
 class MainView():
+    """
+        the view with the menus for selection to simulate
+    """
     def __init__(self,screen):
+        """creates a instance of mainView class
+
+        Args:
+            screen (Pygame Display): the display were to draw the menus
+        """
         self.screen=screen
-        self._get_Tracks_()
-        self._set_alg_()
+        self.__get_Tracks__()
+        self.__set_alg__()
         self.menus=[
             Menu("track",self.tracks),
             Menu("algorithm",self.algorithms),
@@ -61,9 +69,9 @@ class MainView():
         ]
         self.currMenu=0
         self.font = pygame.font.SysFont('Comic Sans MS', 30)
-        pass
+        self.error=None
     
-    def _eventHandler_(self):
+    def __eventHandler__(self):
         """Handler for keyboard events
 
         Raises:
@@ -74,12 +82,16 @@ class MainView():
         for event in pygame.event.get():
             if event.type == pygame.KEYDOWN:
                 if event.key==pygame.K_LEFT:
+                    self.error=None
                     self.menus[self.currMenu].prev()
                 if event.key==pygame.K_RIGHT:
+                    self.error=None
                     self.menus[self.currMenu].next()
                 if event.key==pygame.K_UP:
+                    self.error=None
                     self.prev()
                 if event.key==pygame.K_DOWN:
+                    self.error=None
                     self.next()
                 if event.key==pygame.K_r:
                     self.__init__(self.screen)
@@ -90,6 +102,13 @@ class MainView():
                 if event.key==pygame.K_RETURN:
                     raise SIMULATIONVIEW()
 
+    def setError(self,error:str):
+        """sets the error to show
+
+        Args:
+            error (str): the error to show
+        """
+        self.error=error
     
     def next(self):
         """
@@ -111,7 +130,7 @@ class MainView():
     
     
     
-    def _get_Tracks_(self):
+    def __get_Tracks__(self):
         """
            Scans the circuits folder for tracks to simulate in
            Defines the track names and values
@@ -123,7 +142,7 @@ class MainView():
                 trackName=name.split('.')[0]
                 self.tracks.append((trackName,f'gui/circuits/{name}'))
     
-    def _set_alg_(self):
+    def __set_alg__(self):
         """
            Defines the algorithm names and values
         """
@@ -155,7 +174,7 @@ class MainView():
         """
         return self.menus[2].value()
         
-    def _showMenu_(self,menu,color,pos):
+    def __showMenu__(self,menu,color,pos):
         """Displays a Menu in a given color and position
 
         Args:
@@ -168,6 +187,18 @@ class MainView():
         textRect.center = (500, 40*(pos+1))
         self.screen.blit(text, textRect)
     
+    
+    def __showError__(self):
+        """
+            shows errors on screen
+        """
+        if self.error:
+            text = self.font.render(self.error, True, (255,0,0))
+            textRect = text.get_rect()
+            textRect.center = (500, 250)
+            self.screen.blit(text, textRect)
+        
+    
     def draw(self):
         """
            draws the Menus in the display
@@ -175,6 +206,8 @@ class MainView():
         """
         self.screen.fill(pygame.Color(50,50,50))
         for pos,menu in enumerate(self.menus):
-            self._showMenu_(menu,SELECTED if pos==self.currMenu else UNSELECTED,pos)
-        self._eventHandler_()
+            self.__showMenu__(menu,SELECTED if pos==self.currMenu else UNSELECTED,pos)
+        self.__showError__()
+        
+        self.__eventHandler__()
         

@@ -5,7 +5,7 @@ def generateRandomColor():
     """generates a random color in rgb in the tuple form
 
     Returns:
-        tuple[3]: the rgb values of a color
+        tuple: the rgb values of a color
     """
     c1=random.randint(0,255)
     c2=random.randint(0,255)
@@ -14,21 +14,34 @@ def generateRandomColor():
 
 
 class Car:
+    """
+        The class for the representation of a search algorithm path
+    """
     coords=[]
     color=None
     topSpeed=None
     averageSpeed=None
-    id=-1
     
-    def __init__(self,id,color,tlen=0):
-        self.id=id
+    def __init__(self,color:tuple,tlen:int=0):
+        """creates a intance of a car class
+
+        Args:
+            color (tuple): the color that represents the car
+            tlen (int, optional): the cost of the path the car takes. Defaults to 0.
+        """
         self.color=color
         self.tlen=tlen
         self.coords=[]
         self.speedinCoords=[]
         
         
-    def fromNodes(self,nodes):
+    def fromNodes(self,nodes:list):
+        """updates coords and speedInCoords using a list of nodes
+
+        Args:
+            nodes (list): the list of nodes from where to get the positions and speeds
+        """
+        
         for node in nodes:
             x,y,vx,vy=node.deserialize()    
             self.coords.append((x*10,y*10))
@@ -156,7 +169,6 @@ class Car:
         """
         maxwidth=10
         minwidth=1
-        #assumir isto
         speed=self.getCarSpeedNormAtInstance(instance)
         if speed==0:
             return minwidth
