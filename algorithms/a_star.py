@@ -31,7 +31,6 @@ class A_STAR(Algorithm):
 
         while not opened_queue.empty():
             (current_node_cost, current_node) = opened_queue.get()
-            print(current_node,end_nodes)
 
             if (current_node.x,current_node.y) in end_nodes:
                 return (current_node_cost + current_node.getEstimate(end_nodes),
