@@ -3,6 +3,7 @@ from .utils import GRAVEL_TRAP_COLOR,TRACK_COLOR,START_COLOR,FINISH_COLOR
 from .exceptions import POP, QUIT,PERCARVIEW
 from .car import Car,generateRandomColor
 import random
+import time
 
 from graph.node import Node
 import graph.graph_parser as gp

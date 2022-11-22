@@ -52,10 +52,8 @@ class GUI:
             except SIMULATIONVIEW:
                 try:
                     self.views.append(SimulationView(self.screen,self.views[-1].getAlgorithmMenuValue(),self.views[-1].getNCarsMenuValue(),self.views[-1].getTrackMenuValue()))
-                except InvalidCircuit as e:
-                    print(e)
                 except Exception as e:
-                    print(e)
+                    self.views[-1].setError(e)
             pygame.display.update()
             pygame.event.clear()
         sys.exit()
