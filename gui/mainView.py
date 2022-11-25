@@ -108,7 +108,7 @@ class MainView():
         Args:
             error (str): the error to show
         """
-        self.error=error
+        self.error=str(error)
     
     def next(self):
         """
