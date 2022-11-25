@@ -1,11 +1,10 @@
 from graph.graph import Graph
 from graph.node import Node
 from .exceptions import InconsistenceSize,NoStartsFound,NoFinishesFound
+from .collision import test_colision
 
-wall = 'X'
 start = 'P'
 end = 'F'
-track = '-'
 wall_cost = 25
 normal_cost = 1
 
@@ -94,7 +93,7 @@ def __transverse_circuit__(g:Graph, matrix:list, rows:int, cols:int):
         for a in accelerations:
             neightbour = __apply_acceleration__(node, a)
             cost = normal_cost
-            if __test_colision__(matrix, rows, cols, node.x, node.y, neightbour.x, neightbour.y):
+            if test_colision(matrix, rows, cols, node.x, node.y, neightbour.x, neightbour.y):
                 neightbour = Node(node.x, node.y, 0, 0)
                 cost = wall_cost
             g.add_edge(node, neightbour, cost)
@@ -114,50 +113,3 @@ def __apply_acceleration__(node:Node, a:tuple):
     """
     (ax, ay) = a
     return Node(node.x + node.vx + ax, node.y + node.vy + ay, node.vx + ax, node.vy + ay)
-
-def __sign__(x:int):
-    """signoide function to apply to a given number
-
-    Args:
-        x (int): number to apply signoid to
-
-    Returns:
-        int: signoide representation of the number
-    """
-    if x < 0:
-        return -1
-    if x > 0:
-        return 1
-    return 0
-
-def __test_colision__(matrix:list, rows:int, columns:int, xi:int, yi:int, xf:int, yf:int):
-    """Verifies from given position and speed a colition will happen using a matrix representation of the circuit
-
-    Args:
-        matrix (list): the matrix representation of the circuit
-        rows (int): the number of rows in the matrix
-        columns (int): the number of columns in the matrix
-        xi (int): x coordinate
-        yi (int): y coordinate
-        xf (int): x speed
-        yf (int): y speed
-
-    Returns:
-        _type_: _description_
-    """
-    if xf < 0 or xf >= columns or yf < 0 or yf >= rows:
-        return True
-    
-    #TEMPORARIO!!!
-    (x,y) = (xi,yi)
-    while (x,y) != (xf,yf):
-        step_x = __sign__(xf-x) 
-        step_y = __sign__(yf-y)
-        
-        if matrix[y][x + step_x] == wall or matrix[y + step_y][x] == wall or matrix[y + step_y][x + step_x] == wall:
-            return True
-        
-        x += step_x
-        y += step_y
-    
-    return False
