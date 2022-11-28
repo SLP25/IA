@@ -149,7 +149,7 @@ class MainView():
            Defines the algorithm names and values
         """
         self.algorithms=[
-            ("breath-first-search",BFS()),
+            ("breadth-first-search",BFS()),
             ("depth-first-search",DFS()),
             ("greedy",GREEDY()),
             ("a_star",A_STAR()),

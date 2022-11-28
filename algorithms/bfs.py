@@ -5,7 +5,7 @@ from algorithms.algorithm import Algorithm
 
 class BFS(Algorithm):
     """
-    Class implementing a breath-first-search algorithm
+    Class implementing a breadth-first-search algorithm
     """
     def search(self, graph:Graph, start_node:Node, end_nodes:list):
         """Searches the graph startign on start_node until reaching one of the end_nodes using the bfs algorithm
