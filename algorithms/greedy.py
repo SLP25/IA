@@ -2,7 +2,7 @@ from graph.graph import Graph
 from graph.node import Node
 from .algorithm import Algorithm
 
-class GREDDY(Algorithm):
+class GREEDY(Algorithm):
     """
     Class implementing a breath-first-search algorithm
     """

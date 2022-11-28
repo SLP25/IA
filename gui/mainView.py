@@ -1,9 +1,11 @@
 import os
 import pygame
+
+from algorithms.iterative_dfs import ITERATIVE_DFS
 from .exceptions import POP,QUIT,SIMULATIONVIEW
 from algorithms.bfs import BFS
 from algorithms.dfs import DFS
-from algorithms.greedy import GREDDY
+from algorithms.greedy import GREEDY
 from algorithms.a_star import A_STAR
 
 UNSELECTED=(255,255,255)
@@ -149,8 +151,9 @@ class MainView():
         self.algorithms=[
             ("breath-first-search",BFS()),
             ("depth-first-search",DFS()),
-            ("greddy",GREDDY()),
-            ("a_star",A_STAR())
+            ("greedy",GREEDY()),
+            ("a_star",A_STAR()),
+            ("iterative-depth-first-search",ITERATIVE_DFS())
         ]
     def getTrackMenuValue(self):
         """Get the value in the current position of the track menu

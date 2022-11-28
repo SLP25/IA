@@ -15,7 +15,7 @@ track = '-'
 
 def __intersect_vertical__(xi:int, xf:int, a:float, b:float, c:float):
     """
-    Fills the ans set with the coordinates of intersection points of vertical lines with
+    Returns the coordinates of intersection points of vertical lines with
     x coordinates between xi and xf (inclusive) with the line ax + by + c = 0
     """
     for x in range(xi, xf + 1):
@@ -23,7 +23,7 @@ def __intersect_vertical__(xi:int, xf:int, a:float, b:float, c:float):
     
 def __intersect_horizontal__(yi:int, yf:int, a:float, b:float, c:float):
     """
-    Fills the ans set with the coordinates of intersection points of horizontal lines with
+    Returns the coordinates of intersection points of horizontal lines with
     y coordinates between yi and yf (inclusive) with the line ax + by + c = 0
     """
     for y in range(yi, yf + 1):
@@ -31,11 +31,19 @@ def __intersect_horizontal__(yi:int, yf:int, a:float, b:float, c:float):
 
 def __intersected_squares__(xi:float, yi:float, xf:float, yf:float):
     """
-    Fills the ans set with the grid squares that the line segment that
+    Returns the grid squares that the line segment that
     connects (xi,yi) to (xf,yf) intersects the interior of.
     The coordinates given centered on the top left corner of the square they refer to
     (ex: coordinate (0,0) is the top left corner of square (0,0))
     """
+    
+    orientation = (xf-xi)*(yf-yi) #positive direction means \, negative means /
+    
+    #special case: a single square's diagonal
+    if orientation == 1 or orientation == -1:
+        yield (floor(min(xi, xf)), floor(min(yi, yf)))
+        return
+    
     #these constants define the line by the equation ax + by + c = 0
     a = yi - yf
     b = xf - xi
@@ -48,9 +56,6 @@ def __intersected_squares__(xi:float, yi:float, xf:float, yf:float):
         int_x = int(x)
         int_y = int(y)
         
-        if int_x < 0 or int_y < 0:
-            print((x, y), (xi, yi), (xf, yf), a, b, c)
-        
         if not x.is_integer():      #horizontal line intersection
             yield (int_x, int_y - 1)
             yield (int_x, int_y)
@@ -58,7 +63,6 @@ def __intersected_squares__(xi:float, yi:float, xf:float, yf:float):
             yield (int_x - 1, int_y)
             yield (int_x, int_y)
         else:                       #corner
-            orientation = (xf-xi)*(yf-yi) #positive direction means \, negative means /
             if orientation > 0:
                 yield (int_x - 1, int_y - 1)
                 yield (int_x, int_y)
