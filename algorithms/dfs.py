@@ -49,8 +49,6 @@ class DFS(Algorithm):
 
                 if res != None:
                     res[1].insert(0, node)
-                    visited.remove(start_node)
                     return (res[0] + cost, res[1])
 
-        visited.remove(start_node)
         return None
