@@ -19,6 +19,7 @@ class SimulationView():
         self.screen=screen
         self._drawInit_()
         self.graph=gp.circuit_from_matrix(self.matrix)
+        self.nCars=nCars
         
 
         self.algorithm=algorithm
@@ -174,7 +175,7 @@ class SimulationView():
             if self.timelineCurrPos<self.maxTimelinePos: # so it can't go over the finish
                     self.timelineCurrPos+=1
         if keys[pygame.K_r]:
-            self.__init__(self.screen,self.cars,self.inputImage,self.finalImage)
+            self.__init__(self.screen,self.algorithm,self.nCars,self.inputImage)
         if keys[pygame.K_p]:
             raise PERCARVIEW()
         if keys[pygame.K_q]:
