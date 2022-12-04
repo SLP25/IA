@@ -4,7 +4,7 @@ class Node:
     """
         the representation of a position with a speed vector
     """
-    def __init__(self, x:int, y:int, vx:int, vy:int):
+    def __init__(self, x:int, y:int, vx:int, vy:int,penalization:int=0):
         """Creates a new Node instance with the given values
 
         Args:
@@ -12,12 +12,18 @@ class Node:
             y (int): The y componet of the position
             vx (int): The x componet of the speed vector
             vy (int): The y componet of the speed vector
-        """        
+        """
+        self.penalization= penalization       
         self.x = x
         self.y = y
         self.vx = vx
         self.vy = vy
         self.__estimate__ = None
+        
+    def coords(self):
+        return (self.x,self.y)
+    def speed(self):
+        return (self.vx,self.vy)
         
     def getEstimate(self, finishes:list):
         """calculates the estimate of the nodes to the finishes if not stored yet
@@ -49,7 +55,7 @@ class Node:
         Returns:
             bool: wether they are equal or not
         """
-        return isinstance(node,Node) and node.x == self.x and node.y == self.y and node.vx == self.vx and node.vy == self.vy
+        return isinstance(node,Node) and node.x == self.x and node.y == self.y and node.vx == self.vx and node.vy == self.vy and self.penalization==node.penalization
     
     def __hash__(self):
         """generates the hash of the node

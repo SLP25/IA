@@ -90,12 +90,19 @@ def __transverse_circuit__(g:Graph, matrix:list, rows:int, cols:int):
     
     while len(to_visit) != 0:
         node = to_visit.pop()
+        if node.penalization!=0:
+                neightbour = Node(node.x, node.y, 0, 0,node.penalization-1)
+                g.add_edge(node, neightbour, normal_cost)
+                if neightbour not in visited:
+                    visited.add(neightbour)
+                    to_visit.add(neightbour)
+                continue
         for a in accelerations:
-            neightbour = __apply_acceleration__(node, a)
             cost = normal_cost
+            neightbour = __apply_acceleration__(node, a)
             if test_colision(matrix, rows, cols, node.x, node.y, neightbour.x, neightbour.y):
-                neightbour = Node(node.x, node.y, 0, 0)
-                cost = wall_cost
+                cost=wall_cost
+                neightbour = Node(node.x, node.y, 0, 0,cost)
             g.add_edge(node, neightbour, cost)
             if neightbour not in visited:
                 visited.add(neightbour)

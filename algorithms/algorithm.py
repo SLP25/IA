@@ -10,12 +10,12 @@ class Algorithm(ABC):
 
     """
     @abstractmethod
-    def search(self, graph, start_node, end_nodes):
+    def search(self, graph, cars, end_nodes):
         """ Performs the search on the given graph
 
         Args:
             graph (Graph): the graph to search on
-            start_node (str): the starting node of the search
+            cars (list): the list of cars to simulate
             end_nodes (list(str)): the list of all possible ending nodes
 
         Returns:

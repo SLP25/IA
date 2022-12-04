@@ -1,5 +1,6 @@
 import pygame
 from .exceptions import POP, QUIT
+from graph.car import Car
 
 class PerCarView():
     """
@@ -24,14 +25,14 @@ class PerCarView():
         
 
         
-    def _drawCarLines_(self,car,timelinePos):
+    def _drawCarLines_(self,car:Car,timelinePos):
         """Draws the line of the car moving in a given timestamp
 
         Args:
             car (Car): the car being drawn
             timelinePos (int): the timestamp of the current line to draw
         """
-        pygame.draw.line(self.screen,car.color,car.coords[timelinePos-1],car.coords[timelinePos],width=car.getCarLineWidthAtInstance(timelinePos))
+        pygame.draw.line(self.screen,car.color,car.getCarPosAtInstance(timelinePos-1),car.getCarPosAtInstance(timelinePos),width=car.getCarLineWidthAtInstance(timelinePos))
         
         
     def _eventHandler_(self):
@@ -73,7 +74,7 @@ class PerCarView():
            Draws in the image all the statistics about the car
         """
         car=self.cars[self.currCar]
-        self._drawStat_(f"Distance:{car.tlen:.2f}",10)
+        self._drawStat_(f"Distance:{car.cost:.2f}",10)
         self._drawStat_(f"TopSpeed:{car.getTopSpeed():.2f}",25)
         self._drawStat_(f"AvgSpeed:{car.getAverageSpeed():.2f}",40)
         self._drawStat_(f"MedSpeed:{car.getMedian():.2f}",55)

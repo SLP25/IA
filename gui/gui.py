@@ -50,10 +50,10 @@ class GUI:
                 p=PerCarView(self.screen,self.views[-1].cars,self.views[-1].getTrackComponents())
                 self.views.append(p)
             except SIMULATIONVIEW:
-                try:
+                #try:
                     self.views.append(SimulationView(self.screen,self.views[-1].getAlgorithmMenuValue(),self.views[-1].getNCarsMenuValue(),self.views[-1].getTrackMenuValue()))
-                except Exception as e:
-                    self.views[-1].setError(e)
+                #except Exception as e:
+                #    self.views[-1].setError(e)
             pygame.display.update()
             pygame.event.clear()
         sys.exit()

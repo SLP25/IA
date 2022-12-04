@@ -1,7 +1,7 @@
 import pygame
 from .utils import GRAVEL_TRAP_COLOR,TRACK_COLOR,START_COLOR,FINISH_COLOR
 from .exceptions import POP, QUIT,PERCARVIEW
-from .car import Car,generateRandomColor
+from graph.car import Car
 import random
 import time
 
@@ -35,20 +35,11 @@ class SimulationView():
         self.maxTimelinePos=0
         self.cars=[]
         startingNodes=random.choices(self.graph.starts,k=nCars)
-        simulationNeeded={}
-        
-        for node in startingNodes:
-            if node not in simulationNeeded:
-                simulationNeeded[node]=[]
-            simulationNeeded[node].append(generateRandomColor())
-        
-        for node,colors in simulationNeeded.items():
-            cost,nodes = self.algorithm.search(self.graph, Node(node[0], node[1], 0, 0), self.graph.finishes)
-            self.maxTimelinePos=max(self.maxTimelinePos,len(nodes))
-            for color in colors:
-                c=Car(color=color,tlen=cost)
-                c.fromNodes(nodes)
-                self.cars.append(c)
+        for i in range(nCars):
+            self.cars.append(Car(Node(startingNodes[i][0],startingNodes[i][1],0,0)))
+            
+        self.algorithm.search(self.graph,self.cars, self.graph.finishes)
+        self.maxTimelinePos=max(map(lambda c:len(c.fullPath),self.cars))
 
             
     def __draw_speed_arrow_(self,car):
@@ -148,7 +139,7 @@ class SimulationView():
         
         
         
-    def _drawCarLines_(self,car,timelinePos):
+    def _drawCarLines_(self,car:Car,timelinePos):
         """Draws the path lines for a car at a given timestamp
 
         Args:
@@ -156,7 +147,7 @@ class SimulationView():
             timelinePos (int): the timestamp of the line to draw
         """
         if timelinePos<len(car.coords):
-            pygame.draw.line(self.screen,car.color,car.coords[timelinePos-1],car.coords[timelinePos],width=car.getCarLineWidthAtInstance(timelinePos))
+            pygame.draw.line(self.screen,car.color,car.getCarPosAtInstance(timelinePos-1),car.getCarPosAtInstance(timelinePos),width=car.getCarLineWidthAtInstance(timelinePos))
 
 
     def _eventHandler_(self):
@@ -174,6 +165,8 @@ class SimulationView():
         if keys[pygame.K_RIGHT]:
             if self.timelineCurrPos<self.maxTimelinePos: # so it can't go over the finish
                     self.timelineCurrPos+=1
+
+            
         if keys[pygame.K_r]:
             self.__init__(self.screen,self.algorithm,self.nCars,self.inputImage)
         if keys[pygame.K_p]:
