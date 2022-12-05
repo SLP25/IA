@@ -1,5 +1,6 @@
 from abc import ABC, abstractmethod
-
+from graph.graph import Graph
+from graph.car import Car
 
 class Algorithm(ABC):
     """
@@ -10,7 +11,7 @@ class Algorithm(ABC):
 
     """
     @abstractmethod
-    def search(self, graph, cars, end_nodes):
+    def search(self, graph:Graph,carN:int, cars:list[Car], end_nodes:list[tuple[int,int]]):
         """ Performs the search on the given graph
 
         Args:

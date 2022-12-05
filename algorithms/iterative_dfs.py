@@ -2,6 +2,7 @@ import itertools
 from algorithms.dfs import DFS
 from graph.graph import Graph
 from graph.node import Node
+from graph.car import Car
 from .algorithm import Algorithm
 
 
@@ -10,7 +11,7 @@ class ITERATIVE_DFS(Algorithm):
     Class implementing an iterative depth-first-search algorithm
     """
     
-    def search(self, graph:Graph, start_node:Node, end_nodes:list):
+    def search(self, graph:Graph,carN:int, cars:list[Car], end_nodes:list[tuple[int,int]]):
         """
         Searches the graph startign on start_node until reaching
         one of the end_nodes using the iterative dfs algorithm
@@ -23,7 +24,7 @@ class ITERATIVE_DFS(Algorithm):
         dfs = DFS()
         
         for i in itertools.count():
-            aux = dfs.search(graph, start_node, end_nodes, i)
+            aux = dfs.search(graph,carN,cars,end_nodes, i)
             
-            if aux != None:
+            if cars[carN].cost!=-1:
                 return aux

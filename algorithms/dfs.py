@@ -8,7 +8,7 @@ class DFS(Algorithm):
     """
     Class implementing a depth-first-search algorithm
     """
-    def search(self, graph:Graph, cars:list[Car], end_nodes:list, radius:int = 1e9):
+    def search(self, graph:Graph,carN:int, cars:list[Car], end_nodes:list[tuple[int,int]], radius:int = 1e9):
         """Searches the graph startign on start_node until reaching one of the end_nodes using the dfs algorithm
 
         Args:
@@ -20,21 +20,20 @@ class DFS(Algorithm):
         Returns:
             (int,[Node]): pair with the total distance travels and the path taken to reach the end
         """
-        random.shuffle(cars)
-        for n,car in enumerate(cars):
-            r=None
-            itI=0
-            while r==None:
-                start_node=car.getLastNode()
-                r=self.__search_aux__(graph,start_node, n,cars, end_nodes, set(), radius,itI)
-                itI+=1
-                
-            c,p=r
-            for i in range(itI-1):
-                c+=1
-                p.insert(0,start_node)
-            car.cost=c
-            car.setPath(p)
+        r=None
+        itI=0
+        car=cars[carNumber]
+        while r==None:
+            start_node=car.getLastNode()
+            r=self.__search_aux__(graph,start_node, carNumber,cars, end_nodes, set(), radius,itI)
+            itI+=1
+            
+        c,p=r
+        for i in range(itI-1):
+            c+=1
+            p.insert(0,start_node)
+        car.cost=c
+        car.setPath(p)
             
 
     def __search_aux__(self, graph:Graph, start_node:Node,carN:int,cars:list[Car],end_nodes:list, visited:set, radius:int,it:int):

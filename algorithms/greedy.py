@@ -1,12 +1,13 @@
 from graph.graph import Graph
 from graph.node import Node
+from graph.car import Car
 from .algorithm import Algorithm
 
 class GREEDY(Algorithm):
     """
     Class implementing a breath-first-search algorithm
     """
-    def search(self, graph:Graph, start_node:Node, end_nodes:list):
+    def search(self, graph:Graph,carN:int, cars:list[Car], end_nodes:list[tuple[int,int]]):
         """Searches the graph startign on start_node until reaching one of the end_nodes using the greedy algorithm
 
         Args:
@@ -17,33 +18,36 @@ class GREEDY(Algorithm):
         Returns:
             (int,[Node]): pair with the total distance travels and the path taken to reach the end
         """
+        car=cars[carN]
+        start_node = car.getLastNode()
         current = start_node
-        previous = {}
-        previous[current] = None
+        itI=0
+        it = itI
+        parents = {}
+        parents[(current,it)] = None
         total = 0
         iteration=2**6
         while (current.x,current.y) not in end_nodes:
-            (next, next_cost) = min(graph.adjList[current], key = lambda nc: nc[0].getEstimate(end_nodes))
-            previous[next] = current
+            valid=list(filter(lambda n: not any(c.colides(current.coords(),n[0].coords(),it) for c in cars[:carN]) ,graph.adjList[current]))
+            if valid==[]:
+                itI+=1
+                it = itI
+                parents[(start_node,it)]=(start_node,it-1)
+                current=start_node
+                total=it
+            (next, next_cost) = min(valid, key = lambda nc: nc[0].getEstimate(end_nodes))
+            parents[(next,it+1)] = (current,it)
             total += next_cost
             current = next
-        return (total,self.__reconstruct_path__(previous, current))
+            it+=1
+        cars[carN].setPath(self.__reconstruct_path__((current,it),parents))
+        cars[carN].cost=total
 
 
-    def __reconstruct_path__(self, previous:dict, end:Node):
-        """reconstructs the path the algorithm took from the start up to the end
-
-        Args:
-            previous (dict): the dictionary of each node and the one it came from
-            end (Node): the node it finished on
-
-        Returns:
-            list: the path the algorithm took from the start up to the end
-        """
+    def __reconstruct_path__(self,node:tuple[Node,int],parents:dict):
         path = []
-
-        while end != None:
-            path.insert(0, end)
-            end = previous[end]
-
+        prev=node
+        while prev != None:
+            path.insert(0, prev[0])
+            prev=parents[prev]
         return path

@@ -37,8 +37,8 @@ class SimulationView():
         startingNodes=random.choices(self.graph.starts,k=nCars)
         for i in range(nCars):
             self.cars.append(Car(Node(startingNodes[i][0],startingNodes[i][1],0,0)))
+            self.algorithm.search(self.graph,i,self.cars, self.graph.finishes)
             
-        self.algorithm.search(self.graph,self.cars, self.graph.finishes)
         self.maxTimelinePos=max(map(lambda c:len(c.fullPath),self.cars))
 
             
