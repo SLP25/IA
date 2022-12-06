@@ -18,18 +18,14 @@ class SimulationView():
         self.desiredSize=(100*16,50*16)
         self.xCenter=100*0.5*16
         self.yCenter=50*0.5*16
+        self.nCars=nCars
+        self.algorithm=algorithm
         self.inputImage=inputImagePath
         self.screen=screen
         self.updateProgressBar(0)
-        self._drawInit_()
-        self.updateProgressBar(0.1)
-        
+        self._drawInit_()        
         self.graph=gp.circuit_from_matrix(self.matrix)
-        self.nCars=nCars
-
-        
-
-        self.algorithm=algorithm
+        self.updateProgressBar(0.1)
         self.__simulate__(nCars)
         
     def updateProgressBar(self,inc):

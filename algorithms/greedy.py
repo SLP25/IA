@@ -35,6 +35,7 @@ class GREEDY(Algorithm):
                 parents[(start_node,it)]=(start_node,it-1)
                 current=start_node
                 total=it
+                continue
             (next, next_cost) = min(valid, key = lambda nc: nc[0].getEstimate(end_nodes))
             parents[(next,it+1)] = (current,it)
             total += next_cost

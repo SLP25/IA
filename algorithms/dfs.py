@@ -22,10 +22,10 @@ class DFS(Algorithm):
         """
         r=None
         itI=0
-        car=cars[carNumber]
+        car=cars[carN]
         while r==None:
             start_node=car.getLastNode()
-            r=self.__search_aux__(graph,start_node, carNumber,cars, end_nodes, set(), radius,itI)
+            r=self.__search_aux__(graph,start_node, carN,cars, end_nodes, set(), radius,itI)
             itI+=1
             
         c,p=r
