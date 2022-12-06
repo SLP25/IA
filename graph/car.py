@@ -90,7 +90,7 @@ class Car():
     #gui
     @staticmethod
     def toGuiSize(tup:tuple):
-        return (10*tup[0],10*tup[1])
+        return (16*tup[0],16*tup[1])
     
     @staticmethod
     def generateColor():
@@ -219,7 +219,7 @@ class Car():
         Returns:
             int: the width the line should have at the given intance
         """
-        maxwidth=10
+        maxwidth=14
         minwidth=1
         speed=self.getCarSpeedNormAtInstance(instance)
         if speed==0:

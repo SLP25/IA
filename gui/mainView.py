@@ -72,6 +72,8 @@ class MainView():
         self.currMenu=0
         self.font = pygame.font.SysFont('Comic Sans MS', 30)
         self.error=None
+        self.xCenter=100*0.5*16
+        self.yCenter=50*0.5*16
     
     def __eventHandler__(self):
         """Handler for keyboard events
@@ -187,7 +189,7 @@ class MainView():
         """
         text = self.font.render(str(menu), True,color)
         textRect = text.get_rect()
-        textRect.center = (500, 40*(pos+1))
+        textRect.center = (self.xCenter, 40*(pos+1))
         self.screen.blit(text, textRect)
     
     
@@ -198,7 +200,7 @@ class MainView():
         if self.error:
             text = self.font.render(self.error, True, (255,0,0))
             textRect = text.get_rect()
-            textRect.center = (500, 250)
+            textRect.center = (self.xCenter, self.yCenter-20)
             self.screen.blit(text, textRect)
         
     

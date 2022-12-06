@@ -23,7 +23,7 @@ class GUI:
         """
         pygame.init()
         self.clock = pygame.time.Clock()
-        self.screen = pygame.display.set_mode((1000,500))
+        self.screen = pygame.display.set_mode((100*16,50*16))
         self.views=[]
         
         
@@ -34,7 +34,7 @@ class GUI:
            Main function to run the loop to show the graphics and the simulation
         """
         self.clock = pygame.time.Clock()
-        self.screen = pygame.display.set_mode((1000,500))
+        self.screen = pygame.display.set_mode((100*16,50*16))
         pygame.mouse.set_visible(1)
         while self.running:
             self.clock.tick(20)

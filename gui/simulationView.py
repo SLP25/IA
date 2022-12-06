@@ -1,5 +1,5 @@
 import pygame
-from .utils import GRAVEL_TRAP_COLOR,TRACK_COLOR,START_COLOR,FINISH_COLOR
+from .utils import GRAVEL_TRAP_COLOR,TRACK_COLOR,START_COLOR,FINISH_COLOR,GRAVEL_IMG,TRACK_IMG,START_IMG,FINISH_IMG
 from .exceptions import POP, QUIT,PERCARVIEW
 from graph.car import Car
 import random
@@ -14,23 +14,43 @@ class SimulationView():
     """
     def __init__(self,screen,algorithm,nCars,inputImagePath):
         self.mapSize=(100,50)
-        self.desiredSize=(1000,500)
+        self.progress=0
+        self.desiredSize=(100*16,50*16)
+        self.xCenter=100*0.5*16
+        self.yCenter=50*0.5*16
         self.inputImage=inputImagePath
         self.screen=screen
+        self.updateProgressBar(0)
         self._drawInit_()
+        self.updateProgressBar(0.1)
+        
         self.graph=gp.circuit_from_matrix(self.matrix)
         self.nCars=nCars
+
         
 
         self.algorithm=algorithm
         self.__simulate__(nCars)
         
-
+    def updateProgressBar(self,inc):
+        self.progress+=inc
+        pygame.draw.lines(self.screen, (129, 126, 123),closed=True,points=[
+            (38,self.yCenter-20),
+            (100*16-38,self.yCenter-20),
+            (100*16-38,self.yCenter+20),
+            (38,self.yCenter+20)
+            ],width=2)
+    
+        pygame.draw.rect(self.screen, (0,255,0), pygame.Rect(40,self.yCenter-20,(100*16*self.progress)-80,40))
+        pygame.display.update()
         
     def __simulate__(self,nCars):
         """
            Uses the algorithm in the track to simulate the car
         """
+        
+        avaiableProg=0.9
+        
         self.timelineCurrPos=0
         self.maxTimelinePos=0
         self.cars=[]
@@ -38,6 +58,7 @@ class SimulationView():
         for i in range(nCars):
             self.cars.append(Car(Node(startingNodes[i][0],startingNodes[i][1],0,0)))
             self.algorithm.search(self.graph,i,self.cars, self.graph.finishes)
+            self.updateProgressBar(avaiableProg/nCars)
             
         self.maxTimelinePos=max(map(lambda c:len(c.fullPath),self.cars))
 
@@ -53,7 +74,7 @@ class SimulationView():
         head_width=8
         
         start=pygame.math.Vector2(car.getCarPosAtInstance(self.timelineCurrPos))
-        speed=pygame.math.Vector2(car.getCarSpeedAtInstance(self.timelineCurrPos))*10#sinse the speeds are in the 50*100 representation not upscaled
+        speed=pygame.math.Vector2(car.getCarSpeedAtInstance(self.timelineCurrPos))*16#sinse the speeds are in the 50*100 representation not upscaled
         end=start+speed
         
         arrow = start - end
@@ -116,25 +137,29 @@ class SimulationView():
         reds=pygame.mask.from_threshold(resized_image,(255,0,0),threshold=(50, 30, 30, 255))
         blacks=pygame.mask.from_threshold(resized_image,(0,0,0),threshold=(100, 100, 100, 255))
         
-        self.trackComponents=pygame.Surface(self.mapSize)
+        self.trackComponents=pygame.Surface(self.desiredSize)
+        trackImg = pygame.image.load(TRACK_IMG).convert()
+        startImg = pygame.image.load(START_IMG).convert()
+        finishImg = pygame.image.load(FINISH_IMG).convert()
+        gravelImg = pygame.image.load(GRAVEL_IMG).convert()
         self.matrix=[]
         for r in range(self.mapSize[1]):
             f=''
             for c in range(self.mapSize[0]):
                 if greens.get_at((c,r)):
                     f+='P'
-                    self.trackComponents.set_at((c, r), START_COLOR)
+                    img=startImg
                 elif reds.get_at((c,r)):
                     f+='F'
-                    self.trackComponents.set_at((c, r), FINISH_COLOR)
+                    img=finishImg
                 elif blacks.get_at((c,r)):
                     f+='-'
-                    self.trackComponents.set_at((c, r), TRACK_COLOR)
+                    img=trackImg
                 else:
                     f+='X'
-                    self.trackComponents.set_at((c, r), GRAVEL_TRAP_COLOR)
+                    img = gravelImg 
+                self.trackComponents.blit(img,(c*16,r*16))
             self.matrix.append(f)
-        self.trackComponents=pygame.transform.scale(self.trackComponents,self.desiredSize)
         
         
         
