@@ -13,17 +13,18 @@ class ITERATIVE_DFS(Algorithm):
     
     def search(self, graph:Graph,carN:int, cars:list[Car], end_nodes:list[tuple[int,int]]):
         """
-        Searches the graph startign on start_node until reaching
-        one of the end_nodes using the iterative dfs algorithm
-        
+            Searches the graph startig in the car in position carN last node until reaching one of the end_nodes using the iterative dfs algorithm
+
         Args:
-            graph (Graph): the graph to search the path in
-            start_node (Node): the node to start the search in 
-            end_nodes ([(Int,Int)]): the list of all position corresponding to end Nodes
+            graph (Graph): the graph to search the path on
+            carN (int): the position of the car to search a path to
+            cars (list[Car]): the list of all cars
+            end_nodes (list[tuple[int,int]]): the list of the positions of the coordenates a car needs to reach
+            
         """
         dfs = DFS()
         
-        for i in itertools.count():
+        for i in itertools.count(10,10):
             aux = dfs.search(graph,carN,cars,end_nodes, i)
             
             if cars[carN].cost!=-1:

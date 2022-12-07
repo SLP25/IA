@@ -6,44 +6,110 @@ import random
 
 
 class Car():
+    """
+        The class representing a car
+
+    """
     newid = itertools.count()
+    
     def __init__(self,start:Node):
+        """
+           Creates a new Car object generating a new random color and a autoincreasing id
+
+        Args:
+            start (Node): the Node the car will start on
+        """
         self.id = next(Car.newid)
-        self.color = self.generateColor()
+        self.color = self.__generateColor__()
         self.fullPath=[start]
         self.cost=-1
     
-    def getSpeeds(self):
+    def getSpeeds(self)->list[tuple[int,int]]:
+        """gets a list of the speed vectors in each position of the path
+
+        Returns:
+            list[tuple[int,int]]: a list of the speed vectors in each position of the path
+        """
         if not hasattr(self,'speed'):
             self.speed=[n.speed() for n in self.fullPath]
         return self.speed
     
-    def getCoords(self):
+    def getCoords(self)->list[tuple[int,int]]:
+        """gets a list of the coordenates in each position of the path
+
+        Returns:
+            list[tuple[int,int]]: a list of the coordenates in each position of the path
+        """
         if not hasattr(self,'coords'):
             self.coords=[n.coords() for n in self.fullPath]
         return self.coords
     def getNpVspeed(self):
+        """gets a np array of the speed vector norm in each position of the path
+
+        Returns:
+            list[tuple[int,int]]: a list of the speed vector norm in each position of the path
+        """
         if not hasattr(self,'npVspeed'):
             self.npVspeed=np.array(list(map(self.__vectorNorm__,self.getSpeeds())))
         return self.npVspeed
 
     
-    def getCoordsAtInstance(self,inst):
+    def getCoordsAtInstance(self,inst:int)->tuple[int,int]:
+        """gets the coordenates in a position of the path
+
+        Args:
+            inst (int): the position of the path to get the coordenates in
+
+        Returns:
+            tuple[int,int]: the coordenates pair the intance
+        """
         return self.fullPath[inst].coords()
     
     @staticmethod
-    def on_segment(p, q, r):
+    def on_segment(p:tuple[int,int], q:tuple[int,int], r:tuple[int,int])->bool:
+        """return if a point is contained in a line segment defined by 2 points
+
+        Args:
+            p (tuple[int,int]): segment first point
+            q (tuple[int,int]): segment second point
+            r (tuple[int,int]): the point to check if is contained
+
+        Returns:
+            bool: if a point is contained in a line segmen
+        """
         if r[0] <= max(p[0], q[0]) and r[0] >= min(p[0], q[0]) and r[1] <= max(p[1], q[1]) and r[1] >= min(p[1], q[1]):
             return True
         return False
+    
     @staticmethod    
-    def orientation(p, q, r):
+    def orientation(p:tuple[int,int], q:tuple[int,int], r:tuple[int,int])->int:
+        """returns the orientation of a point in a reference to a semi lines defined by 2 points
+
+        Args:
+            p (tuple[int,int]): segment first point
+            q (tuple[int,int]): segment second point
+            r (tuple[int,int]): the point to check the orientation
+
+        Returns:
+            int: -1 if is to the left, 0 if is in line and 1 to the right
+        """
         val = ((q[1] - p[1]) * (r[0] - q[0])) - ((q[0] - p[0]) * (r[1] - q[1]))
         if val == 0 : return 0
         return 1 if val > 0 else -1
     @staticmethod
     
-    def intersects(p1, q1, p2, q2):
+    def intersects(p1:tuple[int,int], q1:tuple[int,int], p2:tuple[int,int], q2:tuple[int,int])->bool:
+        """Checks if 2 line segments define by 2 points each intersect at some point
+
+        Args:
+            p1 (tuple[int,int]): the first point of the first line segment
+            q1 (tuple[int,int]): the second point of the first line segment
+            p2 (tuple[int,int]): the first point of the second line segment
+            q2 (tuple[int,int]): the second point of the second line segment
+
+        Returns:
+            bool: True if they intersect, False if otherwise
+        """
         o1 = Car.orientation(p1, q1, p2)
         o2 = Car.orientation(p1, q1, q2)
         o3 = Car.orientation(p2, q2, p1)
@@ -61,7 +127,17 @@ class Car():
     
     
 
-    def colides(self,coordsI,coordsF,itI):
+    def colides(self,coordsI:tuple[int,int],coordsF:tuple[int,int],itI:int)->bool:
+        """checks if the movement between 2 coordenates at a given moment would colide with the car
+
+        Args:
+            coordsI (tuple[int,int]): the starting position of the movement
+            coordsF (tuple[int,int]): the desitation position of the movement
+            itI (int): the moment at which the movement is being done
+
+        Returns:
+            bool: wheather a colision will occor
+        """
         if itI==0 or itI >= len(self.fullPath)-2 or coordsI==coordsF:#is in the start,finish or not moving
             return False
         A=coordsI
@@ -71,29 +147,44 @@ class Car():
         if B==D: return True
         return Car.intersects(A,B,C,D)
         
-        
-     
-    
-    
-    def addNodeToPath(self,cost:int,n:Node):
-        self.fullPath.append(n)
-        self.cost.append(cost)
-        
     def setPath(self,l:list):
+        """sets the list of nodes the car travels through
+
+        Args:
+            l (list): the list of nodes to store as the path of the car
+        """
         self.fullPath=l.copy()
         
-    def getLastNode(self):
+    def getLastNode(self)->Node:
+        """gets the last node in the list of the nodes the car traveld through
+
+        Returns:
+            Node: the last node in the list of the nodes the car traveld through
+            None: if the list is empty
+        """
         if self.fullPath:
             return self.fullPath[-1]
         return None
     
     #gui
     @staticmethod
-    def toGuiSize(tup:tuple):
+    def toGuiSize(tup:tuple[int,int])->tuple[int,int]:
+        """returns a tuple with the gui representation size (16*bigger)
+
+        Args:
+            tup (tuple[int,int]): the input tuple
+
+        Returns:
+            tuple[int,int]: the enlarged tuple
+        """
         return (16*tup[0],16*tup[1])
     
-    @staticmethod
-    def generateColor():
+    def __generateColor__(self)->tuple[int,int,int]:
+        """Generates a random color under the rgb format
+
+        Returns:
+            tuple[int,int,int]: tuple with the rgb values
+        """
         r = random.randint(0,255)
         g = random.randint(0,255)
         b = random.randint(0,255)

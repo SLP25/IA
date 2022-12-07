@@ -3,6 +3,14 @@ from math import floor, ceil
 
 
 def uniquefy(generator):
+    """removes duplicates from the input
+
+    Args:
+        generator (sequence): a sequence
+
+    Yields:
+        sequence: without repeted values
+    """
     aux = set()
     
     for i in generator:

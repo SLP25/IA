@@ -12,6 +12,7 @@ class Node:
             y (int): The y componet of the position
             vx (int): The x componet of the speed vector
             vy (int): The y componet of the speed vector
+            penalization (int): the penalization of the node (if it was a crash represents the time the car will have to wait)
         """
         self.penalization= penalization       
         self.x = x
@@ -20,9 +21,21 @@ class Node:
         self.vy = vy
         self.__estimate__ = None
         
-    def coords(self):
+    def coords(self)->tuple[int,int]:
+        """
+            gets the x,y postions of the node
+
+            Returns:
+                tuple[int,int]: the coordenates of the node
+        """
         return (self.x,self.y)
-    def speed(self):
+    def speed(self)->tuple[int,int]:
+        """
+            gets the x,y speed components of the node
+
+            Returns:
+                tuple[int,int]: the speed vector of the node
+        """
         return (self.vx,self.vy)
         
     def getEstimate(self, finishes:list):

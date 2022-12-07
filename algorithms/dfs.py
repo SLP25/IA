@@ -9,16 +9,15 @@ class DFS(Algorithm):
     Class implementing a depth-first-search algorithm
     """
     def search(self, graph:Graph,carN:int, cars:list[Car], end_nodes:list[tuple[int,int]], radius:int = 1e9):
-        """Searches the graph startign on start_node until reaching one of the end_nodes using the dfs algorithm
+        """
+            Searches the graph startig in the car in position carN last node until reaching one of the end_nodes using the dfs algorithm
 
         Args:
-            graph (Graph): the graph to search the path in
-            start_node (Node): the node to start the search in 
-            end_nodes ([(Int,Int)]): the list of all position corresponding to end Nodes
+            graph (Graph): the graph to search the path on
+            carN (int): the position of the car to search a path to
+            cars (list[Car]): the list of all cars
+            end_nodes (list[tuple[int,int]]): the list of the positions of the coordenates a car needs to reach
             radius (int): the depth of the recursion allowed
-
-        Returns:
-            (int,[Node]): pair with the total distance travels and the path taken to reach the end
         """
         r=None
         itI=0
@@ -36,18 +35,21 @@ class DFS(Algorithm):
         car.setPath(p)
             
 
-    def __search_aux__(self, graph:Graph, start_node:Node,carN:int,cars:list[Car],end_nodes:list, visited:set, radius:int,it:int):
-        """Auxiliary method for the main search method
+    def __search_aux__(self, graph:Graph, start_node:Node,carN:int,cars:list[Car],end_nodes:list, visited:set, radius:int,it:int)->tuple[int,list[Node]]:
+        """Auxialiary method for the search method
 
         Args:
-            graph (Graph): the graph to search on
-            start_node (str): the starting/current node of the search
-            end_nodes (list(str)): the list with all possible ending nodes
-            visited (list(str)): the list of all nodes already visited
+            graph (Graph): the graph to search the path on
+            start_node (Node): the starting node
+            carN (int): the position of the car to search a path to
+            cars (list[Car]): the list of all cars
+            end_nodes (list[tuple[int,int]]): the list of the positions of the coordenates a car needs to reach
+            visited (set): the set containing all visited nodes
             radius (int): the depth of the recursion allowed
+            it (int): the iteration number of the current call
 
         Returns:
-            A pair containing the cost and path taken in the found solution
+            tuple[int,list[Node]]: a tuple with the cost and nodes path of the recursive search
         """
         visited.add(start_node)
         

@@ -10,15 +10,15 @@ class BFS(Algorithm):
     Class implementing a breadth-first-search algorithm
     """
     def search(self, graph:Graph,carN:int, cars:list[Car], end_nodes:list[tuple[int,int]]):
-        """Searches the graph startign on start_node until reaching one of the end_nodes using the bfs algorithm
+        """
+            Searches the graph startig in the car in position carN last node until reaching one of the end_nodes using the bfs algorithm
 
         Args:
-            graph (Graph): the graph to search the path in
-            start_node (Node): the node to start the search in 
-            end_nodes ([(Int,Int)]): the list of all position corresponding to end Nodes
+            graph (Graph): the graph to search the path on
+            carN (int): the position of the car to search a path to
+            cars (list[Car]): the list of all cars
+            end_nodes (list[tuple[int,int]]): the list of the positions of the coordenates a car needs to reach
 
-        Returns:
-            (int,[Node]): pair with the total distance travels and the path taken to reach the end
         """
         car=cars[carN]
         itI=0
@@ -55,15 +55,3 @@ class BFS(Algorithm):
                 visited = set()
                 visited.add(start_node)
                 parents[(start_node,itI)]=(start_node,itI-1)
-                    
-                    
-            
-                    
-        
-    def __reconstruct_path__(self,node:tuple[Node,int],parents:dict):
-        path = []
-        prev=node
-        while prev != None:
-            path.insert(0, prev[0])
-            prev=parents[prev]
-        return path

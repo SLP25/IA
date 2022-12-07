@@ -8,15 +8,15 @@ class GREEDY(Algorithm):
     Class implementing a breath-first-search algorithm
     """
     def search(self, graph:Graph,carN:int, cars:list[Car], end_nodes:list[tuple[int,int]]):
-        """Searches the graph startign on start_node until reaching one of the end_nodes using the greedy algorithm
+        """
+            Searches the graph startig in the car in position carN last node until reaching one of the end_nodes using the greedy algorithm
 
         Args:
-            graph (Graph): the graph to search the path in
-            start_node (Node): the node to start the search in 
-            end_nodes ([(Int,Int)]): the list of all position corresponding to end Nodes
-
-        Returns:
-            (int,[Node]): pair with the total distance travels and the path taken to reach the end
+            graph (Graph): the graph to search the path on
+            carN (int): the position of the car to search a path to
+            cars (list[Car]): the list of all cars
+            end_nodes (list[tuple[int,int]]): the list of the positions of the coordenates a car needs to reach
+            
         """
         car=cars[carN]
         start_node = car.getLastNode()
@@ -43,12 +43,3 @@ class GREEDY(Algorithm):
             it+=1
         cars[carN].setPath(self.__reconstruct_path__((current,it),parents))
         cars[carN].cost=total
-
-
-    def __reconstruct_path__(self,node:tuple[Node,int],parents:dict):
-        path = []
-        prev=node
-        while prev != None:
-            path.insert(0, prev[0])
-            prev=parents[prev]
-        return path
