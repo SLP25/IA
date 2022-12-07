@@ -28,7 +28,12 @@ class SimulationView():
         self.updateProgressBar(0.1)
         self.__simulate__(nCars)
         
-    def updateProgressBar(self,inc):
+    def updateProgressBar(self,inc:int):
+        """increases the progress bar by a given ammount
+
+        Args:
+            inc (int): the percentage to increase the progress bar
+        """
         self.progress+=inc
         pygame.draw.lines(self.screen, (129, 126, 123),closed=True,points=[
             (38,self.yCenter-20),
