@@ -4,6 +4,10 @@ from graph.node import Node
 import random
 from graph.car import Car
 
+
+class IterationLimitException(Exception):
+    pass
+
 class DFS(Algorithm):
     """
     Class implementing a depth-first-search algorithm
@@ -23,12 +27,16 @@ class DFS(Algorithm):
         itI=0
         car=cars[carN]
         while r==None:
-            start_node=car.getLastNode()
-            r=self.__search_aux__(graph,start_node, carN,cars, end_nodes, set(), radius,itI)
-            itI+=1
-            
+            try:
+                print(itI)
+                start_node=car.getLastNode()
+                r=self.__search_aux__(graph,start_node, carN,cars, end_nodes, set(), radius,itI)
+                itI+=1
+                if itI>=radius: return None
+            except IterationLimitException:
+                return None
         c,p=r
-        for i in range(itI-1):
+        for i in range(itI):
             c+=1
             p.insert(0,start_node)
         car.cost=c
@@ -36,7 +44,8 @@ class DFS(Algorithm):
             
 
     def __search_aux__(self, graph:Graph, start_node:Node,carN:int,cars:list[Car],end_nodes:list, visited:set, radius:int,it:int)->tuple[int,list[Node]]:
-        """Auxialiary method for the search method
+        """
+            Auxialiary method for the search method
 
         Args:
             graph (Graph): the graph to search the path on
@@ -54,17 +63,19 @@ class DFS(Algorithm):
         visited.add(start_node)
         
         if (start_node.x, start_node.y) in end_nodes:
-            return (0, [])
+            return (0, [start_node])
         
         if radius == 0:
-            return None
+            raise IterationLimitException()
 
         #for each node adjacent to current node
         for (node, cost) in graph.adjList[start_node]:
             # We don't visit a node twice
             if node not in visited and not any(c.colides(start_node.coords(),node.coords(),it) for c in cars[:carN]):
-                res = self.__search_aux__(graph, node,carN,cars, end_nodes, visited, radius - 1,it+1)
-
+                try:
+                    res = self.__search_aux__(graph, node,carN,cars, end_nodes, visited, radius - 1,it+1)
+                except IterationLimitException:
+                    res=None
                 if res != None:
                     res[1].insert(0, node)
                     return (res[0] + cost, res[1])

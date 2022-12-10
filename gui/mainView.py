@@ -1,12 +1,14 @@
 import os
 import pygame
 
-from algorithms.iterative_dfs import ITERATIVE_DFS
+
 from .exceptions import POP,QUIT,SIMULATIONVIEW
 from algorithms.bfs import BFS
 from algorithms.dfs import DFS
 from algorithms.greedy import GREEDY
 from algorithms.a_star import A_STAR
+from algorithms.iterative_dfs import ITERATIVE_DFS
+from algorithms.dijkstra import DIJKSTRA
 
 UNSELECTED=(255,255,255)
 SELECTED=(100,100,255)
@@ -155,7 +157,8 @@ class MainView():
             ("depth-first-search",DFS()),
             ("greedy",GREEDY()),
             ("a_star",A_STAR()),
-            ("iterative-depth-first-search",ITERATIVE_DFS())
+            ("iterative-depth-first-search",ITERATIVE_DFS()),
+            ('dijkstra',DIJKSTRA()),
         ]
     def getTrackMenuValue(self):
         """Get the value in the current position of the track menu

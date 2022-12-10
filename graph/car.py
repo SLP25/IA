@@ -177,7 +177,7 @@ class Car():
         Returns:
             tuple[int,int]: the enlarged tuple
         """
-        return (16*tup[0],16*tup[1])
+        return (8+16*tup[0],8+16*tup[1])
     
     def __generateColor__(self)->tuple[int,int,int]:
         """Generates a random color under the rgb format

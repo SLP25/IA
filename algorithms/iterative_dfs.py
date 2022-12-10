@@ -24,8 +24,7 @@ class ITERATIVE_DFS(Algorithm):
         """
         dfs = DFS()
         
-        for i in itertools.count(10,10):
-            aux = dfs.search(graph,carN,cars,end_nodes, i)
-            
+        for i in itertools.count(1,1):
+            dfs.search(graph,carN,cars,end_nodes, i)
             if cars[carN].cost!=-1:
-                return aux
+                break
