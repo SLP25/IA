@@ -192,15 +192,16 @@ class SimulationView():
             if self.timelineCurrPos<self.maxTimelinePos: # so it can't go over the finish
                     self.timelineCurrPos+=1
 
-            
-        if keys[pygame.K_r]:
-            self.__init__(self.screen,self.algorithm,self.nCars,self.inputImage)
-        if keys[pygame.K_p]:
-            raise PERCARVIEW()
-        if keys[pygame.K_q]:
-            raise QUIT()
-        if keys[pygame.K_ESCAPE]:
-            raise POP()
+        for event in pygame.event.get():
+            if event.type == pygame.KEYDOWN:
+                if event.key==pygame.K_r:
+                    self.__init__(self.screen,self.algorithm,self.nCars,self.inputImage)
+                if event.key==pygame.K_p:
+                    raise PERCARVIEW()
+                if event.key==pygame.K_q:
+                    raise QUIT()
+                if event.key==pygame.K_ESCAPE:
+                    raise POP()
         
     def draw(self):
         """
