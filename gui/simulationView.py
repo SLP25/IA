@@ -5,6 +5,13 @@ from graph.car import Car
 import random
 import time
 
+from algorithms.bfs import BFS
+from algorithms.dfs import DFS
+from algorithms.greedy import GREEDY
+from algorithms.a_star import A_STAR
+from algorithms.iterative_dfs import ITERATIVE_DFS
+from algorithms.dijkstra import DIJKSTRA
+
 from graph.node import Node
 import graph.graph_parser as gp
 
@@ -18,7 +25,11 @@ class SimulationView():
         self.desiredSize=(100*16,50*16)
         self.xCenter=100*0.5*16
         self.yCenter=50*0.5*16
-        self.nCars=nCars
+        if algorithm=='all':
+            self.nCars=6
+        elif algorithm=='allG':
+            self.nCars=5
+        else:self.nCars=nCars
         self.algorithm=algorithm
         self.inputImage=inputImagePath
         self.screen=screen
@@ -26,7 +37,7 @@ class SimulationView():
         self._drawInit_()        
         self.graph=gp.circuit_from_matrix(self.matrix)
         self.updateProgressBar(0.1)
-        self.__simulate__(nCars)
+        self.__simulate__(self.nCars)
         
     def updateProgressBar(self,inc:int):
         """increases the progress bar by a given ammount
@@ -56,10 +67,21 @@ class SimulationView():
         self.maxTimelinePos=0
         self.cars=[]
         startingNodes=random.choices(self.graph.starts,k=nCars)
-        for i in range(nCars):
-            self.cars.append(Car(Node(startingNodes[i][0],startingNodes[i][1],0,0)))
-            self.algorithm.search(self.graph,i,self.cars, self.graph.finishes)
-            self.updateProgressBar(avaiableProg/nCars)
+        if self.algorithm=='all' or self.algorithm=='allG':
+            algorithms=[(BFS(),(255, 127, 14)),(DFS(),(31, 119, 180)),(A_STAR(),(44, 160, 44)),(ITERATIVE_DFS(),(148, 103, 189)),(DIJKSTRA(),(140, 86, 75))]
+            if self.algorithm=='all': algorithms.append((GREEDY(),(214, 39, 40)))
+            random.shuffle(algorithms)
+            for i in range(nCars):
+                alg,color=algorithms.pop(0)
+                self.cars.append(Car(Node(startingNodes[i][0],startingNodes[i][1],0,0)))
+                self.cars[-1].color=color
+                alg.search(self.graph,i,self.cars, self.graph.finishes)
+                self.updateProgressBar(avaiableProg/nCars)
+        else:
+            for i in range(nCars):
+                self.cars.append(Car(Node(startingNodes[i][0],startingNodes[i][1],0,0)))
+                self.algorithm.search(self.graph,i,self.cars, self.graph.finishes)
+                self.updateProgressBar(avaiableProg/nCars)
             
         self.maxTimelinePos=max(map(lambda c:len(c.fullPath),self.cars))
 

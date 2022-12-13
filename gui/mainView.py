@@ -159,6 +159,8 @@ class MainView():
             ("a_star",A_STAR()),
             ("iterative-depth-first-search",ITERATIVE_DFS()),
             ('dijkstra',DIJKSTRA()),
+            ('allG','allG'),
+            ('all','all')
         ]
     def getTrackMenuValue(self):
         """Get the value in the current position of the track menu
