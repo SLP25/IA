@@ -28,7 +28,6 @@ class DFS(Algorithm):
         car=cars[carN]
         while r==None:
             try:
-                print(itI)
                 start_node=car.getLastNode()
                 r=self.__search_aux__(graph,start_node, carN,cars, end_nodes, set(), radius,itI)
                 itI+=1

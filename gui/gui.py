@@ -8,7 +8,12 @@ from .exceptions import POP,QUIT,PERCARVIEW,SIMULATIONVIEW
 from graph.exceptions import InvalidCircuit
 import sys
         
-            
+audios={
+    MainView:'gui/audios/main.mp3',
+    SimulationView:'gui/audios/simulation.mp3',
+    PerCarView:'gui/audios/perCar.mp3'
+}
+AUDIO=False
 
 sys.setrecursionlimit(10**6)
 
@@ -25,6 +30,10 @@ class GUI:
         self.clock = pygame.time.Clock()
         self.screen = pygame.display.set_mode((100*16,50*16))
         self.views=[]
+        if AUDIO:
+            pygame.mixer.init()
+            pygame.mixer.music.set_volume(1)
+            self.playing=""
         
         
         self.views.append(MainView(self.screen))               
@@ -41,6 +50,12 @@ class GUI:
             if len(self.views)==0:
                 break
             try:
+                if AUDIO:
+                    if self.playing!=audios[type(self.views[-1])]:
+                        pygame.mixer.music.stop()
+                        pygame.mixer.music.load(audios[type(self.views[-1])])
+                        self.playing=audios[type(self.views[-1])]
+                        pygame.mixer.music.play(-1)
                 self.views[-1].draw()
             except POP:
                 self.views.pop()

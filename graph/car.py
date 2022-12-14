@@ -1,8 +1,10 @@
 import itertools
 from .node import Node
 import math
+import pygame
 import numpy as np
 import random
+
 
 
 class Car():
@@ -12,7 +14,7 @@ class Car():
     """
     newid = itertools.count()
     
-    def __init__(self,start:Node):
+    def __init__(self,start:Node,name=""):
         """
            Creates a new Car object generating a new random color and a autoincreasing id
 
@@ -21,6 +23,7 @@ class Car():
         """
         self.id = next(Car.newid)
         self.color = self.__generateColor__()
+        self.name = name
         self.fullPath=[start]
         self.cost=-1
     
@@ -44,7 +47,8 @@ class Car():
             self.coords=[n.coords() for n in self.fullPath]
         return self.coords
     def getNpVspeed(self):
-        """gets a np array of the speed vector norm in each position of the path
+        """
+            Gets a np array of the speed vector norm in each position of the path
 
         Returns:
             list[tuple[int,int]]: a list of the speed vector norm in each position of the path
@@ -54,8 +58,10 @@ class Car():
         return self.npVspeed
 
     
-    def getCoordsAtInstance(self,inst:int)->tuple[int,int]:
-        """gets the coordenates in a position of the path
+    
+    def getCoordsAtInstance(self,inst:int):
+        """
+            Gets the coordenates in a position of the path
 
         Args:
             inst (int): the position of the path to get the coordenates in
@@ -66,8 +72,9 @@ class Car():
         return self.fullPath[inst].coords()
     
     @staticmethod
-    def on_segment(p:tuple[int,int], q:tuple[int,int], r:tuple[int,int])->bool:
-        """return if a point is contained in a line segment defined by 2 points
+    def on_segment(p:tuple[int,int], q:tuple[int,int], r:tuple[int,int]):
+        """
+            Return if a point is contained in a line segment defined by 2 points
 
         Args:
             p (tuple[int,int]): segment first point
@@ -82,8 +89,9 @@ class Car():
         return False
     
     @staticmethod    
-    def orientation(p:tuple[int,int], q:tuple[int,int], r:tuple[int,int])->int:
-        """returns the orientation of a point in a reference to a semi lines defined by 2 points
+    def orientation(p:tuple[int,int], q:tuple[int,int], r:tuple[int,int]):
+        """
+            Returns the orientation of a point in a reference to a semi lines defined by 2 points
 
         Args:
             p (tuple[int,int]): segment first point
@@ -98,8 +106,9 @@ class Car():
         return 1 if val > 0 else -1
     @staticmethod
     
-    def intersects(p1:tuple[int,int], q1:tuple[int,int], p2:tuple[int,int], q2:tuple[int,int])->bool:
-        """Checks if 2 line segments define by 2 points each intersect at some point
+    def intersects(p1:tuple[int,int], q1:tuple[int,int], p2:tuple[int,int], q2:tuple[int,int]):
+        """
+            Checks if 2 line segments define by 2 points each intersect at some point
 
         Args:
             p1 (tuple[int,int]): the first point of the first line segment
@@ -127,8 +136,9 @@ class Car():
     
     
 
-    def colides(self,coordsI:tuple[int,int],coordsF:tuple[int,int],itI:int)->bool:
-        """checks if the movement between 2 coordenates at a given moment would colide with the car
+    def colides(self,coordsI:tuple[int,int],coordsF:tuple[int,int],itI:int):
+        """
+            Checks if the movement between 2 coordenates at a given moment would colide with the car
 
         Args:
             coordsI (tuple[int,int]): the starting position of the movement
@@ -148,15 +158,17 @@ class Car():
         return Car.intersects(A,B,C,D)
         
     def setPath(self,l:list):
-        """sets the list of nodes the car travels through
+        """
+            Sets the list of nodes the car travels through
 
         Args:
             l (list): the list of nodes to store as the path of the car
         """
         self.fullPath=l.copy()
         
-    def getLastNode(self)->Node:
-        """gets the last node in the list of the nodes the car traveld through
+    def getLastNode(self):
+        """
+            Gets the last node in the list of the nodes the car traveld through
 
         Returns:
             Node: the last node in the list of the nodes the car traveld through
@@ -168,8 +180,9 @@ class Car():
     
     #gui
     @staticmethod
-    def toGuiSize(tup:tuple[int,int])->tuple[int,int]:
-        """returns a tuple with the gui representation size (16*bigger)
+    def toGuiSize(tup:tuple[int,int]):
+        """
+            Returns a tuple with the gui representation size (16*bigger)
 
         Args:
             tup (tuple[int,int]): the input tuple
@@ -179,8 +192,9 @@ class Car():
         """
         return (8+16*tup[0],8+16*tup[1])
     
-    def __generateColor__(self)->tuple[int,int,int]:
-        """Generates a random color under the rgb format
+    def __generateColor__(self):
+        """
+            Generates a random color under the rgb format
 
         Returns:
             tuple[int,int,int]: tuple with the rgb values
@@ -318,6 +332,86 @@ class Car():
         width=max(minwidth,math.ceil(maxwidth/speed))
         return width
     
+    def __draw_speed_arrow__(self,screen,position):
+        
+        body_width=4
+        head_width=8
+        
+        start=pygame.math.Vector2(self.getCarPosAtInstance(position))
+        speed=pygame.math.Vector2(self.getCarSpeedAtInstance(position))*16#sinse the speeds are in the 50*100 representation not upscaled
+        end=start+speed
+        
+        arrow = start - end
+        angle = arrow.angle_to(pygame.Vector2(0, -1))
+        
+        body_length = arrow.length() *0.8
+        head_height = arrow.length() *0.2
+        
+        # Vector for the arrow head
+        head_verts = [
+            pygame.Vector2(0, head_height / 2),  # Center
+            pygame.Vector2(head_width / 2, -head_height / 2),  # Bottomright
+            pygame.Vector2(-head_width / 2, -head_height / 2),  # Bottomleft
+        ]
+        # rotation of the head to match the speed direction
+        translation = pygame.Vector2(0, arrow.length() - (head_height / 2)).rotate(-angle)
+        for i in range(len(head_verts)):
+            head_verts[i].rotate_ip(-angle)
+            head_verts[i] += translation
+            head_verts[i] += start
+    
+        #draw head
+        pygame.draw.polygon(screen, self.color, head_verts)
+    
+        # Stop weird shapes when the arrow is shorter than arrow head
+        if arrow.length() >= head_height:
+            # Vector for the arrow body
+            body_verts = [
+                pygame.Vector2(-body_width / 2, body_length / 2),  # Topleft
+                pygame.Vector2(body_width / 2, body_length / 2),  # Topright
+                pygame.Vector2(body_width / 2, -body_length / 2),  # Bottomright
+                pygame.Vector2(-body_width / 2, -body_length / 2),  # Bottomleft
+            ]
+            # rotation of the body to match the speed direction
+            translation = pygame.Vector2(0, body_length / 2).rotate(-angle)
+            for i in range(len(body_verts)):
+                body_verts[i].rotate_ip(-angle)
+                body_verts[i] += translation
+                body_verts[i] += start
+            #draw body
+            pygame.draw.polygon(screen, self.color, body_verts)
+
+    def __draw_name__(self,screen,position):
+        font = pygame.font.SysFont('Comic Sans MS', 12)
+        text = font.render(self.name, True,self.color)
+        
+        x,y=self.getCarPosAtInstance(position)
+        text_width, text_height = font.size(self.name)
+        y+=10
+        textRect = text.get_rect()
+        textRect.center = (x, y)
+        screen.blit(text, textRect)
+        
+    
+    def __drawCarLines__(self,screen,timelinePos):
+        """Draws the path lines for a car at a given timestamp
+        Args:
+            car (Car): the car whose path should be drawn
+            timelinePos (int): the timestamp of the line to draw
+        """
+        if timelinePos<len(self.getCoords()):
+            pygame.draw.line(screen,self.color,self.getCarPosAtInstance(timelinePos-1),self.getCarPosAtInstance(timelinePos),width=self.getCarLineWidthAtInstance(timelinePos))
+
+    
+    
+    def drawPath(self,screen,position):
+        pygame.draw.circle(screen,self.color,self.getCarPosAtInstance(position), 5)
+        self.__draw_name__(screen,position)
+        self.__draw_speed_arrow__(screen,position)
+        if position!=0:
+            for i in range(1,position+1):
+                self.__drawCarLines__(screen, i)
+
 
     
     

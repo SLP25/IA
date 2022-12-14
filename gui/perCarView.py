@@ -25,16 +25,6 @@ class PerCarView():
         
 
         
-    def _drawCarLines_(self,car:Car,timelinePos):
-        """Draws the line of the car moving in a given timestamp
-
-        Args:
-            car (Car): the car being drawn
-            timelinePos (int): the timestamp of the current line to draw
-        """
-        pygame.draw.line(self.screen,car.color,car.getCarPosAtInstance(timelinePos-1),car.getCarPosAtInstance(timelinePos),width=car.getCarLineWidthAtInstance(timelinePos))
-        
-        
     def _eventHandler_(self):
         """Handler for keyboard events
 
@@ -94,6 +84,4 @@ class PerCarView():
         
         self._eventHandler_()
         car=self.cars[self.currCar]
-        pygame.draw.circle(self.screen,car.color,car.getCarPosAtInstance(-1), 5)
-        for i in range(1,len(car.coords)):
-            self._drawCarLines_(car,i)
+        car.drawPath(self.screen,len(car.getCoords()))

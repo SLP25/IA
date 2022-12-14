@@ -15,11 +15,37 @@ from algorithms.dijkstra import DIJKSTRA
 from graph.node import Node
 import graph.graph_parser as gp
 
+LISTOFNAMES=[
+        'Battery Voltas',
+        'Super Max',
+        'Smooth Operator',
+        'Louis Hamilton',
+        'Goatifi',
+        'Lord Peceval',
+        'Hammer Time',
+        'K-Mag',
+        'Minister of Defense',
+        'Nikita Mazespin',
+        'Lance Strolled',
+        'Du Bist Weltmeister',
+        'Mad Max',
+        'The Rat',
+        'Hunt the Shunt',
+        'Jos the Boss',
+        'Britney',
+        'The Honey Badger',
+        'The Iceman',
+        'Schumi',
+        'Teflonso',
+        ]
+
 class SimulationView():
     """
        the view to show the simulation ocuring
     """
     def __init__(self,screen,algorithm,nCars,inputImagePath):
+        self.listOfNames = LISTOFNAMES.copy()
+        random.shuffle(self.listOfNames)
         self.mapSize=(100,50)
         self.progress=0
         self.desiredSize=(100*16,50*16)
@@ -68,77 +94,27 @@ class SimulationView():
         self.cars=[]
         startingNodes=random.choices(self.graph.starts,k=nCars)
         if self.algorithm=='all' or self.algorithm=='allG':
-            algorithms=[(BFS(),(255, 127, 14)),(DFS(),(31, 119, 180)),(A_STAR(),(44, 160, 44)),(ITERATIVE_DFS(),(148, 103, 189)),(DIJKSTRA(),(140, 86, 75))]
-            if self.algorithm=='all': algorithms.append((GREEDY(),(214, 39, 40)))
+            algorithms=[(BFS(),(255, 127, 14),'BFS'),
+                        (DFS(),(31, 119, 180),'DFS'),
+                        (A_STAR(),(44, 160, 44),'A*'),
+                        (ITERATIVE_DFS(),(148, 103, 189),'IDFS'),
+                        (DIJKSTRA(),(140, 86, 75),'Dijkstra')
+                        ]
+            if self.algorithm=='all': algorithms.append((GREEDY(),(214, 39, 40),'Greedy'))
             random.shuffle(algorithms)
             for i in range(nCars):
-                alg,color=algorithms.pop(0)
-                self.cars.append(Car(Node(startingNodes[i][0],startingNodes[i][1],0,0)))
+                alg,color,name=algorithms.pop(0)
+                self.cars.append(Car(Node(startingNodes[i][0],startingNodes[i][1],0,0),name))
                 self.cars[-1].color=color
                 alg.search(self.graph,i,self.cars, self.graph.finishes)
                 self.updateProgressBar(avaiableProg/nCars)
         else:
             for i in range(nCars):
-                self.cars.append(Car(Node(startingNodes[i][0],startingNodes[i][1],0,0)))
+                self.cars.append(Car(Node(startingNodes[i][0],startingNodes[i][1],0,0),self.listOfNames.pop(0)))
                 self.algorithm.search(self.graph,i,self.cars, self.graph.finishes)
                 self.updateProgressBar(avaiableProg/nCars)
             
         self.maxTimelinePos=max(map(lambda c:len(c.fullPath),self.cars))
-
-            
-    def __draw_speed_arrow_(self,car):
-        """Draws in the screen a arrow representing the speed vector of a given car at the current timeline moment
-
-        Args:
-            car (Car): the car to get the speed from
-        """
-
-        body_width=4
-        head_width=8
-        
-        start=pygame.math.Vector2(car.getCarPosAtInstance(self.timelineCurrPos))
-        speed=pygame.math.Vector2(car.getCarSpeedAtInstance(self.timelineCurrPos))*16#sinse the speeds are in the 50*100 representation not upscaled
-        end=start+speed
-        
-        arrow = start - end
-        angle = arrow.angle_to(pygame.Vector2(0, -1))
-        
-        body_length = arrow.length() *0.8
-        head_height = arrow.length() *0.2
-        
-        # Vector for the arrow head
-        head_verts = [
-            pygame.Vector2(0, head_height / 2),  # Center
-            pygame.Vector2(head_width / 2, -head_height / 2),  # Bottomright
-            pygame.Vector2(-head_width / 2, -head_height / 2),  # Bottomleft
-        ]
-        # rotation of the head to match the speed direction
-        translation = pygame.Vector2(0, arrow.length() - (head_height / 2)).rotate(-angle)
-        for i in range(len(head_verts)):
-            head_verts[i].rotate_ip(-angle)
-            head_verts[i] += translation
-            head_verts[i] += start
-    
-        #draw head
-        pygame.draw.polygon(self.screen, car.color, head_verts)
-    
-        # Stop weird shapes when the arrow is shorter than arrow head
-        if arrow.length() >= head_height:
-            # Vector for the arrow body
-            body_verts = [
-                pygame.Vector2(-body_width / 2, body_length / 2),  # Topleft
-                pygame.Vector2(body_width / 2, body_length / 2),  # Topright
-                pygame.Vector2(body_width / 2, -body_length / 2),  # Bottomright
-                pygame.Vector2(-body_width / 2, -body_length / 2),  # Bottomleft
-            ]
-            # rotation of the body to match the speed direction
-            translation = pygame.Vector2(0, body_length / 2).rotate(-angle)
-            for i in range(len(body_verts)):
-                body_verts[i].rotate_ip(-angle)
-                body_verts[i] += translation
-                body_verts[i] += start
-            #draw body
-            pygame.draw.polygon(self.screen, car.color, body_verts)
         
         
         
@@ -186,16 +162,6 @@ class SimulationView():
         
         
         
-        
-    def _drawCarLines_(self,car:Car,timelinePos):
-        """Draws the path lines for a car at a given timestamp
-
-        Args:
-            car (Car): the car whose path should be drawn
-            timelinePos (int): the timestamp of the line to draw
-        """
-        if timelinePos<len(car.coords):
-            pygame.draw.line(self.screen,car.color,car.getCarPosAtInstance(timelinePos-1),car.getCarPosAtInstance(timelinePos),width=car.getCarLineWidthAtInstance(timelinePos))
 
 
     def _eventHandler_(self):
@@ -225,16 +191,13 @@ class SimulationView():
                 if event.key==pygame.K_ESCAPE:
                     raise POP()
         
+        
+                
     def draw(self):
         """
            Draws the view filling with the background color,the components,handles events and shows the cars up to the current isntance
         """        
         self.screen.blit(self.trackComponents,(0,0))
         self._eventHandler_()
-        
         for car in self.cars:
-            pygame.draw.circle(self.screen,car.color,car.getCarPosAtInstance(self.timelineCurrPos), 5)
-            self.__draw_speed_arrow_(car)
-            if self.timelineCurrPos!=0:
-                for i in range(1,self.timelineCurrPos+1):
-                    self._drawCarLines_(car,i)
+            car.drawPath(self.screen, self.timelineCurrPos)
