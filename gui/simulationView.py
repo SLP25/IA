@@ -108,7 +108,6 @@ class SimulationView():
             random.shuffle(algorithms)
             for i in range(nCars):
                 alg,color,name=algorithms.pop(0)
-                print(name)
                 self.cars.append(Car(Node(startingNodes[i][0],startingNodes[i][1],0,0),name))
                 self.cars[-1].color=color
                 alg.search(self.graph,i,self.cars, self.graph.finishes)
