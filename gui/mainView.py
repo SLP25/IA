@@ -159,7 +159,8 @@ class MainView():
             ("a_star",A_STAR()),
             ("iterative-depth-first-search",ITERATIVE_DFS()),
             ('dijkstra',DIJKSTRA()),
-            ('allG','allG'),
+            ('all without greedy/dfsIt','allGDI'),
+            ('all without greedy','allG'),
             ('all','all')
         ]
     def getTrackMenuValue(self):

@@ -55,6 +55,8 @@ class SimulationView():
             self.nCars=6
         elif algorithm=='allG':
             self.nCars=5
+        elif algorithm=='allGDI':
+            self.nCars=4
         else:self.nCars=nCars
         self.algorithm=algorithm
         self.inputImage=inputImagePath
@@ -93,17 +95,20 @@ class SimulationView():
         self.maxTimelinePos=0
         self.cars=[]
         startingNodes=random.choices(self.graph.starts,k=nCars)
-        if self.algorithm=='all' or self.algorithm=='allG':
+        if self.algorithm=='all' or self.algorithm=='allG' or self.algorithm=='allGDI':
             algorithms=[(BFS(),(255, 127, 14),'BFS'),
                         (DFS(),(31, 119, 180),'DFS'),
                         (A_STAR(),(44, 160, 44),'A*'),
+                        (DIJKSTRA(),(140, 86, 75),'Dijkstra'),
                         (ITERATIVE_DFS(),(148, 103, 189),'IDFS'),
-                        (DIJKSTRA(),(140, 86, 75),'Dijkstra')
-                        ]
-            if self.algorithm=='all': algorithms.append((GREEDY(),(214, 39, 40),'Greedy'))
+                        (GREEDY(),(214, 39, 40),'Greedy')
+                     ]
+            if self.algorithm.startswith('allG'): algorithms.pop() 
+            if self.algorithm=='allGDI': algorithms.pop()
             random.shuffle(algorithms)
             for i in range(nCars):
                 alg,color,name=algorithms.pop(0)
+                print(name)
                 self.cars.append(Car(Node(startingNodes[i][0],startingNodes[i][1],0,0),name))
                 self.cars[-1].color=color
                 alg.search(self.graph,i,self.cars, self.graph.finishes)
