@@ -1,4 +1,5 @@
 from algorithms.algorithm import Algorithm
+from collections import deque
 from graph.graph import Graph
 from graph.node import Node
 import random
@@ -12,72 +13,52 @@ class DFS(Algorithm):
     """
     Class implementing a depth-first-search algorithm
     """
-    def search(self, graph:Graph,carN:int, cars:list[Car], end_nodes:list[tuple[int,int]], radius:int = 1e9):
+    def search(self, graph:Graph,carN:int, cars:list[Car], end_nodes:list[tuple[int,int]],radius=1e9):
         """
-            Searches the graph startig in the car in position carN last node until reaching one of the end_nodes using the dfs algorithm
+            Searches the graph startig in the car in position carN last node until reaching one of the end_nodes using the bfs algorithm
 
         Args:
             graph (Graph): the graph to search the path on
             carN (int): the position of the car to search a path to
             cars (list[Car]): the list of all cars
             end_nodes (list[tuple[int,int]]): the list of the positions of the coordenates a car needs to reach
-            radius (int): the depth of the recursion allowed
+
         """
-        r=None
-        itI=0
         car=cars[carN]
-        while r==None:
-            try:
-                start_node=car.getLastNode()
-                r=self.__search_aux__(graph,start_node, carN,cars, end_nodes, set(), radius,itI)
-                itI+=1
-                if itI>=radius: return None
-            except IterationLimitException:
-                return None
-        c,p=r
-        for i in range(itI):
-            c+=1
-            p.insert(0,start_node)
-        car.cost=c
-        car.setPath(p)
-            
-
-    def __search_aux__(self, graph:Graph, start_node:Node,carN:int,cars:list[Car],end_nodes:list, visited:set, radius:int,it:int)->tuple[int,list[Node]]:
-        """
-            Auxialiary method for the search method
-
-        Args:
-            graph (Graph): the graph to search the path on
-            start_node (Node): the starting node
-            carN (int): the position of the car to search a path to
-            cars (list[Car]): the list of all cars
-            end_nodes (list[tuple[int,int]]): the list of the positions of the coordenates a car needs to reach
-            visited (set): the set containing all visited nodes
-            radius (int): the depth of the recursion allowed
-            it (int): the iteration number of the current call
-
-        Returns:
-            tuple[int,list[Node]]: a tuple with the cost and nodes path of the recursive search
-        """
+        itI=0
+        #the queue to store unprocessed Nodes
+        start_node=car.getLastNode()
+        queue = deque()
+        parents={}
+        # queue will store a tuple with the node to process,cost up to that node,depth
+        parents[(start_node,itI)]=None
+        queue.append((start_node,0,itI)) 
+        visited = set()
         visited.add(start_node)
-        cars[carN].graphPath.append(start_node)
-        
-        if (start_node.x, start_node.y) in end_nodes:
-            return (0, [start_node])
-        
-        if radius == 0:
-            raise IterationLimitException()
+        maxitReched=False
 
-        #for each node adjacent to current node
-        for (node, cost) in graph.adjList[start_node]:
-            # We don't visit a node twice
-            if node not in visited and not any(c.colides(start_node.coords(),node.coords(),it) for c in cars[:carN]):
-                try:
-                    res = self.__search_aux__(graph, node,carN,cars, end_nodes, visited, radius - 1,it+1)
-                except IterationLimitException:
-                    res=None
-                if res != None:
-                    res[1].insert(0, node)
-                    return (res[0] + cost, res[1])
+        while queue:
+            node, cost,it = queue.pop()
+            car.graphPath.append(node)
 
-        return None
+            #found the finish
+            if (node.x,node.y) in end_nodes:
+                car.setPath(self.__reconstruct_path__((node,it),parents))
+                car.cost=cost
+                break
+            if it<radius:
+                #didn't find it so will add the nodes connected to it
+                for (n,c) in graph.adjList[node]:
+                    if ((n not in visited) and not any(c.colides(node.coords(),n.coords(),it) for c in cars[:carN])):
+                        parents[(n,it+1)]=(node,it)
+                        queue.append((n,cost + c,it+1))
+                        visited.add(n)
+            else:
+                maxitReched=True
+            #if no more ways restart, moving 1 iteration later
+            if not queue and not maxitReched:
+                itI+=1
+                queue.append((start_node,itI,itI))
+                visited = set()
+                visited.add(start_node)
+                parents[(start_node,itI)]=(start_node,itI-1)
