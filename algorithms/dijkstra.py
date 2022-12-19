@@ -36,7 +36,7 @@ class DIJKSTRA(Algorithm):
 
         while not opened_queue.empty():
             current_node_cost, current_node,it = opened_queue.get() # current_node_cost edges from start 
-            
+            car.graphPath.append(current_node)
             if (current_node.x,current_node.y) in end_nodes:
                 car.setPath(self.__reconstruct_path__((current_node,it),parents))
                 car.cost=current_node_cost

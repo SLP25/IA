@@ -28,6 +28,7 @@ class GREEDY(Algorithm):
         total = 0
         iteration=2**6
         while (current.x,current.y) not in end_nodes:
+            car.graphPath.append(current)
             valid=list(filter(lambda n: not any(c.colides(current.coords(),n[0].coords(),it) for c in cars[:carN]) ,graph.adjList[current]))
             if valid==[]:
                 itI+=1

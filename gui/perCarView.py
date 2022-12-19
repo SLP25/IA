@@ -1,5 +1,5 @@
 import pygame
-from .exceptions import POP, QUIT
+from .exceptions import POP, QUIT,GRAPHVIEW
 from graph.car import Car
 
 class PerCarView():
@@ -44,6 +44,8 @@ class PerCarView():
                     self.__init__(self.screen, self.cars, self.trackComponents)
                 if event.key==pygame.K_q:
                     raise QUIT()
+                if event.key==pygame.K_g:
+                    raise GRAPHVIEW()
                 if event.key==pygame.K_ESCAPE:
                     raise POP()
                 

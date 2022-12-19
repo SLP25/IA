@@ -34,6 +34,7 @@ class BFS(Algorithm):
 
         while not queue.empty():
             node, cost,it = queue.get(0)
+            car.graphPath.append(node)
 
             #found the finish
             if (node.x,node.y) in end_nodes:

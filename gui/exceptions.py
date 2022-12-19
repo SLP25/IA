@@ -34,3 +34,10 @@ class SIMULATIONVIEW(GUIException):
         Exception (GUIException): exc
     """
     pass
+class GRAPHVIEW(GUIException):
+    """exception to go to the GRAPH view
+
+    Args:
+        Exception (GUIException): exc
+    """
+    pass

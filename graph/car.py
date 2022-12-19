@@ -25,6 +25,7 @@ class Car():
         self.color = self.__generateColor__()
         self.name = name
         self.fullPath=[start]
+        self.graphPath=[start]
         self.cost=-1
     
     def getSpeeds(self)->list[tuple[int,int]]:
@@ -46,6 +47,15 @@ class Car():
         if not hasattr(self,'coords'):
             self.coords=[n.coords() for n in self.fullPath]
         return self.coords
+    def getGraphCoords(self)->list[tuple[int,int]]:
+        """gets a list of the coordenates in each position of the graph
+
+        Returns:
+            list[tuple[int,int]]: a list of the coordenates in each position of the path
+        """
+        if not hasattr(self,'graphCoords'):
+            self.graphCoords=[n.coords() for n in self.graphPath]
+        return self.graphCoords
     def getNpVspeed(self):
         """
             Gets a np array of the speed vector norm in each position of the path
@@ -216,6 +226,19 @@ class Car():
         if instance>len(self.getCoords())-1:
             instance=-1
         return self.toGuiSize(self.getCoords()[instance])
+    
+    def getGraphPosAtInstance(self,instance=0):
+        """gets the coordenats the car is at in a given instance
+
+        Args:
+            instance (int, optional): timestamp to get position at. Defaults to 0.
+
+        Returns:
+            tuple: a tuple with the coordnats at that instance
+        """
+        if instance>len(self.getGraphCoords())-1:
+            instance=-1
+        return self.toGuiSize(self.getGraphCoords()[instance])
     
     def getCarSpeedAtInstance(self,instance=0):
         """gets the coordenats the car is at in a given instance

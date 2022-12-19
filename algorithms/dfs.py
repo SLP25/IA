@@ -60,6 +60,7 @@ class DFS(Algorithm):
             tuple[int,list[Node]]: a tuple with the cost and nodes path of the recursive search
         """
         visited.add(start_node)
+        cars[carN].graphPath.append(start_node)
         
         if (start_node.x, start_node.y) in end_nodes:
             return (0, [start_node])

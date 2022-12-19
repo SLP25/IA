@@ -4,7 +4,8 @@ from threading import Thread
 from .simulationView import SimulationView
 from .perCarView import PerCarView
 from .mainView import MainView
-from .exceptions import POP,QUIT,PERCARVIEW,SIMULATIONVIEW
+from .graphView import GraphView
+from .exceptions import POP,QUIT,PERCARVIEW,SIMULATIONVIEW,GRAPHVIEW
 from graph.exceptions import InvalidCircuit
 import sys
         
@@ -64,6 +65,9 @@ class GUI:
             except PERCARVIEW:
                 p=PerCarView(self.screen,self.views[-1].cars,self.views[-1].getTrackComponents())
                 self.views.append(p)
+            except GRAPHVIEW:
+                g=GraphView(self.screen,self.views[-1].cars[self.views[-1].currCar],self.views[-1].trackComponents)
+                self.views.append(g)
             except SIMULATIONVIEW:
                 try:
                     self.views.append(SimulationView(self.screen,self.views[-1].getAlgorithmMenuValue(),self.views[-1].getNCarsMenuValue(),self.views[-1].getTrackMenuValue()))
